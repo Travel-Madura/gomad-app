@@ -18,11 +18,20 @@ COPY . /var/www/html
 
 WORKDIR /var/www/html
 
-# Install Composer
+# Install Composer dengan retry
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
 
-# Run migrations (credentials will be passed from Render environment)
+# Set Composer timeout lebih lama dan pakai mirror
+ENV COMPOSER_PROCESS_TIMEOUT=2000
+
+# Install dependencies dengan retry dan prefer-dist
+RUN composer config -g repos.packagist composer https://packagist.org && \
+    composer config -g github-protocols https && \
+    composer install --no-dev --optimize-autoloader --prefer-dist || \
+    composer install --no-dev --optimize-autoloader --prefer-dist || \
+    composer install --no-dev --optimize-autoloader --prefer-dist
+
+# Run migrations
 RUN php artisan migrate --force || true
 
 # Laravel optimization
