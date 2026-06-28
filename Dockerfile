@@ -13,18 +13,24 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo_mysql bcmath mbstring zip
 
+# Enable PHP error logging
+RUN echo "error_log = /proc/self/fd/2" >> /usr/local/etc/php/conf.d/docker.ini && \
+    echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker.ini && \
+    echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker.ini && \
+    echo "log_errors = On" >> /usr/local/etc/php/conf.d/docker.ini
+
 # Copy project files
 COPY . /var/www/html
 
 WORKDIR /var/www/html
 
-# Install Composer dengan retry
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set Composer timeout lebih lama dan pakai mirror
+# Set Composer timeout
 ENV COMPOSER_PROCESS_TIMEOUT=2000
 
-# Install dependencies dengan retry dan prefer-dist
+# Install dependencies
 RUN composer config -g repos.packagist composer https://packagist.org && \
     composer config -g github-protocols https && \
     composer install --no-dev --optimize-autoloader --prefer-dist || \
@@ -40,6 +46,9 @@ RUN php artisan config:cache && \
 
 # Create storage link
 RUN php artisan storage:link || true
+
+# Debug: cek apakah vendor ada
+RUN ls -la /var/www/html/vendor || echo "vendor not found"
 
 # Configure Nginx
 RUN echo 'server { \
