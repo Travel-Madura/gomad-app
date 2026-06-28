@@ -56,6 +56,15 @@ use App\Http\Controllers\Web\Admin\SettlementController as WebAdminSettlementCon
 use App\Http\Controllers\Web\Admin\ReportController as WebAdminReportController;
 use App\Http\Controllers\Web\Admin\SettingController as WebAdminSettingController;
 
+// Test routes for debugging
+Route::get('/test', function () {
+    return 'Hello from GoMad!';
+});
+
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Customer Routes
