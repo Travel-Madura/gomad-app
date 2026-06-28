@@ -21,8 +21,12 @@ WORKDIR /var/www/html
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install dependencies with retry and mirror
+RUN composer config -g repos.packagist composer https://packagist.org && \
+    composer config -g github-protocols https && \
+    composer install --no-dev --optimize-autoloader --prefer-dist || \
+    composer install --no-dev --optimize-autoloader --prefer-dist || \
+    composer install --no-dev --optimize-autoloader --prefer-dist
 
 # Create storage and cache directories
 RUN mkdir -p storage/framework/cache \
