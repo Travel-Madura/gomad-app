@@ -14,15 +14,18 @@ ENV APP_ENV production
 ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
 
-# Allow composer as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Install extensions dan dependencies
+# Install PHP extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libonig-dev \
+    libzip-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo_mysql bcmath
+    && docker-php-ext-install gd pdo_mysql bcmath mbstring zip
+
+RUN php artisan migrate --force || true
 
 CMD ["/start.sh"]
