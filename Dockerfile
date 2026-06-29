@@ -1,6 +1,6 @@
 FROM php:8.4-fpm-alpine
 
-# Install Nginx dan Node.js (untuk build Vite)
+# Install Nginx + Node.js
 RUN apk add --no-cache nginx nodejs npm
 
 # Install PHP extensions
@@ -21,15 +21,18 @@ WORKDIR /var/www/html
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Composer dependencies
-RUN composer config -g repos.packagist composer https://packagist.org && \
-    composer config -g github-protocols https && \
-    composer install --no-dev --optimize-autoloader --prefer-dist || \
-    composer install --no-dev --optimize-autoloader --prefer-dist || \
-    composer install --no-dev --optimize-autoloader --prefer-dist
+# Install Composer dependencies (dengan timeout lebih lama)
+RUN composer config -g process-timeout 1200 && \
+    composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
 
-# Build Vite assets
-RUN npm install && npm run build
+# Install NPM dependencies + Build Vite (dengan timeout + retry)
+RUN npm config set fetch-timeout 120000 && \
+    npm config set fetch-retries 5 && \
+    npm install && \
+    npm run build
+
+# Hapus node_modules setelah build (biar image kecil)
+RUN rm -rf node_modules
 
 # Create storage and cache directories
 RUN mkdir -p storage/framework/cache \
