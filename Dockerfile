@@ -66,5 +66,5 @@ RUN echo 'server { \
 
 EXPOSE 80
 
-# Run config cache + migrate saat runtime
-ENTRYPOINT ["sh", "-c", "php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'"]
+# Run config cache + migrate _ storage:link saat runtime
+ENTRYPOINT ["sh", "-c", "php artisan config:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan storage:link --force && php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'"]

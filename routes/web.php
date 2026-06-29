@@ -475,4 +475,21 @@ Route::get('/reseed', function () {
     return response("<pre>{$output}</pre>");
 });
 
+// TEMPORARY: Create storage link
+Route::get('/storage-link', function () {
+    $key = request('key');
+    
+    if ($key !== 'gepeng123') {
+        abort(403);
+    }
+    
+    Artisan::call('storage:link', ['--force' => true]);
+    
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Storage link created!',
+        'output' => Artisan::output(),
+    ]);
+});
+
 // End of file
