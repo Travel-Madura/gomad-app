@@ -321,4 +321,46 @@ Route::get('/register', [WebAuthRegisterController::class, 'showRegistrationForm
 Route::post('/register', [WebAuthRegisterController::class, 'register']);
 Route::post('/logout', [WebAuthLoginController::class, 'logout'])->name('logout');
 
+
+// TEMPORARY: Run seeders step by step
+Route::get('/run-seed', function () {
+    $key = request('key');
+    
+    if ($key !== 'gepeng123') {
+        abort(403, 'Unauthorized');
+    }
+    
+    $output = '';
+    
+    $seeders = [
+        'PlatformSettingSeeder',
+        'RouteSeeder',
+        'AdditionalRouteSeeder',
+        'UserSeeder',
+        'PaymentAgentSeeder',
+        'ScheduleSeeder',
+        'PromoSeeder',
+        'EnrichVerifiedDataSeeder',
+        'WithdrawalSeeder',
+        'ReviewSeeder',
+        'NotificationSeeder',
+        'PassengerTransferSeeder',
+        'WalletTransactionSeeder',
+    ];
+    
+    foreach ($seeders as $seeder) {
+        try {
+            Artisan::call('db:seed', [
+                '--class' => $seeder,
+                '--force' => true,
+            ]);
+            $output .= "✅ $seeder: OK\n";
+        } catch (\Exception $e) {
+            $output .= "❌ $seeder: " . $e->getMessage() . "\n";
+        }
+    }
+    
+    return response("<pre>$output</pre>");
+});
+
 // End of file
