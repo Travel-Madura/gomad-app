@@ -1,26 +1,29 @@
 <?php
-// File: database/seeders/WithdrawalSeeder.php
-// Deskripsi: Seeder untuk data withdrawal (penarikan dana) agency
 
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use function fake;
 use App\Models\Agency;
 use App\Models\AgencyWallet;
 use App\Models\User;
 use App\Models\Withdrawal;
+use Faker\Factory;
 
 class WithdrawalSeeder extends Seeder
 {
+    protected $faker;
+
+    public function __construct()
+    {
+        $this->faker = Factory::create('id_ID');
+    }
+
     public function run(): void
     {
         echo "💰 GENERATING WITHDRAWAL DATA...\n";
         echo "═══════════════════════════════════════════\n\n";
 
         $adminId = User::where('email', 'admin@gomad.id')->first()?->id ?? 1;
-
-        // Ambil semua agency VERIFIED yang punya wallet
         $agencies = Agency::where('is_verified', true)->get();
 
         if ($agencies->isEmpty()) {
@@ -35,14 +38,12 @@ class WithdrawalSeeder extends Seeder
             $wallet = AgencyWallet::where('agency_id', $agency->id)->first();
 
             if (!$wallet || $wallet->total_earned <= 0) {
-                continue; // Skip agency tanpa riwayat pendapatan
+                continue;
             }
 
-            // ========================================
-            // 1. WITHDRAWAL COMPLETED (2 transaksi)
-            // ========================================
+            // Completed
             for ($i = 0; $i < 2; $i++) {
-                $bank = fake()->randomElement($banks);
+                $bank = $this->faker->randomElement($banks);
                 $amount = rand(500000, 3000000);
                 $adminFee = 5000;
                 $netAmount = $amount - $adminFee;
@@ -53,8 +54,8 @@ class WithdrawalSeeder extends Seeder
                     'admin_fee' => $adminFee,
                     'net_amount' => $netAmount,
                     'bank_name' => $bank,
-                    'bank_account_number' => fake()->numerify('##############'),
-                    'bank_account_name' => $agency->contact_person ?? fake('id_ID')->name(),
+                    'bank_account_number' => $this->faker->numerify('##############'),
+                    'bank_account_name' => $agency->contact_person ?? $this->faker->name(),
                     'status' => 'completed',
                     'approved_by' => $adminId,
                     'approved_at' => now()->subDays(rand(7, 60)),
@@ -68,21 +69,11 @@ class WithdrawalSeeder extends Seeder
                     'completed_at' => now()->subDays(rand(6, 59)),
                 ]);
 
-                // Update wallet
-                if ($wallet->total_withdrawn >= $amount) {
-                    $wallet->update([
-                        'total_withdrawn' => $wallet->total_withdrawn,
-                        'available_balance' => max(0, $wallet->available_balance),
-                    ]);
-                }
-
                 $totalWithdrawals++;
             }
 
-            // ========================================
-            // 2. WITHDRAWAL PROCESSING (1 transaksi)
-            // ========================================
-            $bank = fake()->randomElement($banks);
+            // Processing
+            $bank = $this->faker->randomElement($banks);
             $amount = rand(300000, 1500000);
             $adminFee = 5000;
             $netAmount = $amount - $adminFee;
@@ -93,8 +84,8 @@ class WithdrawalSeeder extends Seeder
                 'admin_fee' => $adminFee,
                 'net_amount' => $netAmount,
                 'bank_name' => $bank,
-                'bank_account_number' => fake()->numerify('##############'),
-                'bank_account_name' => $agency->contact_person ?? fake('id_ID')->name(),
+                'bank_account_number' => $this->faker->numerify('##############'),
+                'bank_account_name' => $agency->contact_person ?? $this->faker->name(),
                 'status' => 'processing',
                 'approved_by' => $adminId,
                 'approved_at' => now()->subHours(rand(1, 24)),
@@ -109,10 +100,8 @@ class WithdrawalSeeder extends Seeder
 
             $totalWithdrawals++;
 
-            // ========================================
-            // 3. WITHDRAWAL PENDING (1 transaksi)
-            // ========================================
-            $bank = fake()->randomElement($banks);
+            // Pending
+            $bank = $this->faker->randomElement($banks);
             $amount = rand(200000, 2000000);
             $adminFee = 5000;
             $netAmount = $amount - $adminFee;
@@ -123,22 +112,16 @@ class WithdrawalSeeder extends Seeder
                 'admin_fee' => $adminFee,
                 'net_amount' => $netAmount,
                 'bank_name' => $bank,
-                'bank_account_number' => fake()->numerify('##############'),
-                'bank_account_name' => $agency->contact_person ?? fake('id_ID')->name(),
+                'bank_account_number' => $this->faker->numerify('##############'),
+                'bank_account_name' => $agency->contact_person ?? $this->faker->name(),
                 'status' => 'pending',
-                'approved_by' => null,
-                'approved_at' => null,
-                'transaction_id' => null,
-                'payment_detail' => null,
             ]);
 
             $totalWithdrawals++;
 
-            // ========================================
-            // 4. WITHDRAWAL REJECTED (1 per 3 agency)
-            // ========================================
+            // Rejected
             if ($index % 3 === 0) {
-                $bank = fake()->randomElement($banks);
+                $bank = $this->faker->randomElement($banks);
                 $amount = rand(500000, 2500000);
                 $adminFee = 5000;
                 $netAmount = $amount - $adminFee;
@@ -158,24 +141,21 @@ class WithdrawalSeeder extends Seeder
                     'admin_fee' => $adminFee,
                     'net_amount' => $netAmount,
                     'bank_name' => $bank,
-                    'bank_account_number' => fake()->numerify('##############'),
-                    'bank_account_name' => $agency->contact_person ?? fake('id_ID')->name(),
+                    'bank_account_number' => $this->faker->numerify('##############'),
+                    'bank_account_name' => $agency->contact_person ?? $this->faker->name(),
                     'status' => 'rejected',
                     'approved_by' => $adminId,
                     'approved_at' => now()->subDays(rand(3, 14)),
-                    'rejected_reason' => fake()->randomElement($rejectedReasons),
+                    'rejected_reason' => $this->faker->randomElement($rejectedReasons),
                     'transaction_id' => 'WD-' . strtoupper(substr(md5($agency->id . 'rejected'), 0, 10)),
-                    'payment_detail' => null,
                 ]);
 
                 $totalWithdrawals++;
             }
 
-            // ========================================
-            // 5. WITHDRAWAL FAILED (1 per 5 agency)
-            // ========================================
+            // Failed
             if ($index % 5 === 0) {
-                $bank = fake()->randomElement($banks);
+                $bank = $this->faker->randomElement($banks);
                 $amount = rand(500000, 2000000);
                 $adminFee = 5000;
                 $netAmount = $amount - $adminFee;
@@ -193,18 +173,18 @@ class WithdrawalSeeder extends Seeder
                     'admin_fee' => $adminFee,
                     'net_amount' => $netAmount,
                     'bank_name' => $bank,
-                    'bank_account_number' => fake()->numerify('##############'),
-                    'bank_account_name' => $agency->contact_person ?? fake('id_ID')->name(),
+                    'bank_account_number' => $this->faker->numerify('##############'),
+                    'bank_account_name' => $agency->contact_person ?? $this->faker->name(),
                     'status' => 'failed',
                     'approved_by' => $adminId,
                     'approved_at' => now()->subDays(rand(1, 7)),
-                    'rejected_reason' => fake()->randomElement($failedReasons),
+                    'rejected_reason' => $this->faker->randomElement($failedReasons),
                     'transaction_id' => 'WD-' . strtoupper(substr(md5($agency->id . 'failed'), 0, 10)),
                     'payment_detail' => json_encode([
                         'method' => 'bank_transfer',
                         'bank' => $bank,
                         'reference' => 'REF' . rand(100000, 999999),
-                        'error' => fake()->randomElement($failedReasons),
+                        'error' => $this->faker->randomElement($failedReasons),
                     ]),
                 ]);
 
@@ -217,7 +197,6 @@ class WithdrawalSeeder extends Seeder
         echo "═══════════════════════════════════════════\n";
         echo "📊 Total Withdrawals: {$totalWithdrawals}\n";
         echo "🏢 Agencies: {$agencies->count()}\n\n";
-
         echo "📋 STATUS BREAKDOWN:\n";
         echo "──────────────────────────────────────────────\n";
         echo "✅ Completed: " . Withdrawal::where('status', 'completed')->count() . "\n";
