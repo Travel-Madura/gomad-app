@@ -320,99 +320,35 @@ Route::get('/auth/google', [App\Http\Controllers\Web\Auth\GoogleController::clas
 Route::get('/auth/google/callback', [App\Http\Controllers\Web\Auth\GoogleController::class, 'callback'])->name('google.callback');
 
 // ONE-TIME SEEDER — Auto delete after first use
+// ONE-TIME SEEDER — Auto delete after first use
 Route::get('/seed-' . env('SEED_TOKEN', 'default'), function () {
     set_time_limit(0);
     
-    $fresh = request('fresh') === '1';
     $output = '';
     
-    // ============================================
-    // FRESH MODE: Hapus semua data dulu
-    // ============================================
-    if ($fresh) {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        
-        $tables = [
-            'wallet_transactions', 'withdrawals', 'notifications',
-            'passenger_transfer_bookings', 'passenger_transfers',
-            'promo_usages', 'referral_trackings', 'referral_codes',
-            'promo_schedule', 'promos', 'reviews',
-            'cash_payments', 'payments', 'booking_passengers', 'bookings',
-            'settlements', 'driver_locations',
-            'route_pricing', 'schedule_stops', 'schedules',
-            'user_devices', 'platform_settings', 'pickup_zones',
-            'agency_wallets', 'agency_verifications', 'vehicles',
-            'agencies', 'payment_agents',
-            'personal_access_tokens', 'failed_jobs', 'job_batches', 'jobs',
-            'cache_locks', 'cache', 'sessions', 'password_reset_tokens',
-            'users', 'route_stops', 'routes',
-        ];
-        
-        foreach ($tables as $table) {
-            try {
-                DB::table($table)->truncate();
-                $output .= "🧹 Truncated: {$table}\n";
-            } catch (\Exception $e) {
-                $output .= "⏭️  Skip: {$table}\n";
-            }
-        }
-        
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
-        $output .= "\n✅ SEMUA TABEL DIKOSONGKAN!\n\n";
-    }
-    
-    // ============================================
-    // RUN SEEDERS
-    // ============================================
-    $output .= "🌱 Menjalankan seeders...\n\n";
-    
-    $seeders = [
-        'PlatformSettingSeeder',
-        'RouteSeeder',
-        'AdditionalRouteSeeder',
-        'UserSeeder',
-        'PaymentAgentSeeder',
-        'ScheduleSeeder',
-        'PromoSeeder',
-        'EnrichVerifiedDataSeeder',
-        'WithdrawalSeeder',
-        'ReviewSeeder',
-        'NotificationSeeder',
-        'PassengerTransferSeeder',
-        'WalletTransactionSeeder',
-    ];
-    
-    foreach ($seeders as $seeder) {
-        try {
-            Artisan::call('db:seed', [
-                '--class' => $seeder,
-                '--force' => true,
-            ]);
-            $output .= "✅ {$seeder}: OK\n";
-        } catch (\Exception $e) {
-            $output .= "❌ {$seeder}: " . $e->getMessage() . "\n";
-        }
-    }
-    
-    // ============================================
-    // AUTO-DELETE ROUTE
-    // ============================================
     try {
+        Artisan::call('db:seed', [
+            '--class' => 'CompleteDataSeeder',
+            '--force' => true,
+        ]);
+        
+        $output .= "✅ CompleteDataSeeder selesai!\n\n";
+        $output .= Artisan::output();
+        
+        // Auto-delete route
         $webPhp = base_path('routes/web.php');
         $content = file_get_contents($webPhp);
-        // Hapus route ini dari file
         $content = preg_replace(
-            '/\/\/ ONE-TIME SEEDER.*?→\n/s',
+            '/\/\/ ONE-TIME SEEDER.*?\nRoute::get.*?}\);?\n/s',
             '// ONE-TIME SEEDER — Telah dijalankan dan dihapus otomatis',
             $content
         );
         file_put_contents($webPhp, $content);
-        $output .= "\n🔒 Route ini telah dihapus otomatis dari web.php\n";
+        $output .= "\n🔒 Route ini telah dihapus otomatis.\n";
+        
     } catch (\Exception $e) {
-        $output .= "\n⚠️  Gagal hapus route: " . $e->getMessage() . "\n";
+        $output .= "❌ ERROR: " . $e->getMessage();
     }
-    
-    $output .= "\n🎉 SELESAI!\n";
     
     return response("<pre>{$output}</pre>");
 });
