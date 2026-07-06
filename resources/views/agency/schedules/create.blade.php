@@ -32,7 +32,6 @@
         ];
     })->values()->toArray();
     
-    // Data wallet untuk COD
     $walletService = app(\App\Services\WalletService::class);
     $agency = auth()->user()->agency;
     $depositBalance = (float) ($agency->wallet->deposit_balance ?? 0);
@@ -41,10 +40,10 @@
 @endphp
 
 <div class="max-w-5xl mx-auto" id="scheduleFormApp">
-    <h1 class="text-2xl font-bold text-secondary mb-6">Buat Jadwal Baru</h1>
+    <h1 class="text-2xl font-bold text-[#111111] mb-6">Buat Jadwal Baru</h1>
 
     @if($errors->any())
-    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
+    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[12px] mb-6 text-sm">
         @foreach($errors->all() as $error)<p>• {{ $error }}</p>@endforeach
     </div>
     @endif
@@ -53,13 +52,13 @@
         @csrf
         
         {{-- STEP 1: Info Dasar --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-            <h2 class="font-bold text-lg text-secondary mb-4">Informasi Dasar</h2>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
+            <h2 class="font-bold text-lg text-[#111111] mb-4">Informasi Dasar</h2>
             
             <div class="grid md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Rute <span class="text-red-500">*</span></label>
-                    <select name="route_id" id="routeSelect" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Rute <span class="text-[#C1121F]">*</span></label>
+                    <select name="route_id" id="routeSelect" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
                         <option value="">Pilih Rute</option>
                         @foreach($routes as $route)
                         <option value="{{ $route->id }}" {{ old('route_id') == $route->id ? 'selected' : '' }}>{{ $route->route_name }}</option>
@@ -67,20 +66,20 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Kendaraan <span class="text-red-500">*</span></label>
-                    <select name="vehicle_id" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kendaraan <span class="text-[#C1121F]">*</span></label>
+                    <select name="vehicle_id" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
                         <option value="">Pilih Kendaraan</option>
                         @foreach($vehicles as $v)
                         <option value="{{ $v->id }}" {{ old('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->plate_number }} ({{ $v->capacity }} seat)</option>
                         @endforeach
                     </select>
                     @if($vehicles->isEmpty())
-                    <p class="text-xs text-red-500 mt-1">Belum ada kendaraan. <a href="{{ route('agency.vehicles.create') }}" class="underline">Tambah</a></p>
+                    <p class="text-xs text-[#C1121F] mt-1 font-light">Belum ada kendaraan. <a href="{{ route('agency.vehicles.create') }}" class="underline">Tambah</a></p>
                     @endif
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Driver</label>
-                    <select name="driver_id" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50">
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Driver</label>
+                    <select name="driver_id" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition">
                         <option value="">Pilih Driver (opsional)</option>
                         @foreach($drivers as $d)
                         <option value="{{ $d->id }}" {{ old('driver_id') == $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
@@ -88,18 +87,18 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Tanggal (min {{ \Carbon\Carbon::parse($minDate)->format('d M Y') }}) <span class="text-red-500">*</span></label>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Tanggal (min {{ \Carbon\Carbon::parse($minDate)->format('d M Y') }}) <span class="text-[#C1121F]">*</span></label>
                     <input type="date" name="departure_date" min="{{ $minDate }}" value="{{ old('departure_date') }}" 
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                           class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Jam <span class="text-red-500">*</span></label>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Jam <span class="text-[#C1121F]">*</span></label>
                     <input type="time" name="departure_time" value="{{ old('departure_time', '08:00') }}" 
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                           class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Kelas <span class="text-red-500">*</span></label>
-                    <select name="travel_class" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kelas <span class="text-[#C1121F]">*</span></label>
+                    <select name="travel_class" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
                         <option value="economy" {{ old('travel_class') == 'economy' ? 'selected' : '' }}>Ekonomi</option>
                         <option value="premium" {{ old('travel_class') == 'premium' ? 'selected' : '' }}>Premium</option>
                         <option value="charter" {{ old('travel_class') == 'charter' ? 'selected' : '' }}>Charter</option>
@@ -109,31 +108,31 @@
             
             <div class="grid md:grid-cols-3 gap-4 mt-4">
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Harga Dasar per Seat (Rp) <span class="text-red-500">*</span></label>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Harga Dasar per Seat (Rp) <span class="text-[#C1121F]">*</span></label>
                     <input type="number" name="price_per_seat" id="basePrice" value="{{ old('price_per_seat', 150000) }}" 
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" min="1000" required>
-                    <p class="text-xs text-gray-500 mt-1" id="maxPriceInfo"></p>
+                           class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" min="1000" required>
+                    <p class="text-[10px] text-gray-400 mt-1 font-light" id="maxPriceInfo"></p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Max Overload (Ekonomi)</label>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Max Overload (Ekonomi)</label>
                     <input type="number" name="max_overload" value="{{ old('max_overload', 2) }}" min="0" max="2" 
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50">
+                           class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-secondary mb-1">Batas Bagasi (kg/orang)</label>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Batas Bagasi (kg/orang)</label>
                     <input type="number" name="baggage_limit_kg" value="{{ old('baggage_limit_kg', 15) }}" min="0" max="50" 
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50">
+                           class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition">
                 </div>
             </div>
         </div>
 
         {{-- STEP 2: Konfigurasi Stop --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6" id="stopConfigSection" style="display:none;">
-            <h2 class="font-bold text-lg text-secondary mb-4">Konfigurasi Stop & Harga</h2>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm" id="stopConfigSection" style="display:none;">
+            <h2 class="font-bold text-lg text-[#111111] mb-4">Konfigurasi Stop & Harga</h2>
             
-            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4 text-sm text-yellow-800">
-                <p class="font-medium">Cara Konfigurasi:</p>
-                <ol class="list-decimal list-inside mt-1 space-y-1">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-[12px] p-4 mb-4 text-sm text-yellow-800">
+                <p class="font-mono uppercase tracking-wider text-xs font-medium">Cara Konfigurasi:</p>
+                <ol class="list-decimal list-inside mt-1 space-y-1 font-light">
                     <li>Centang <strong>Pickup</strong> atau <strong>Dropoff</strong> di setiap stop tengah</li>
                     <li>Sistem akan menampilkan popup untuk mengisi harga kombinasi baru</li>
                     <li>Stop pertama (Pickup wajib) dan stop terakhir (Dropoff wajib) sudah otomatis</li>
@@ -142,62 +141,59 @@
 
             <div class="overflow-x-auto mb-4">
                 <table class="w-full text-sm">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-[#F5F5F5] border-b border-[#E5E5E5]">
                         <tr>
-                            <th class="px-4 py-3 text-left">Stop</th>
-                            <th class="px-4 py-3 text-center w-24">Pickup</th>
-                            <th class="px-4 py-3 text-center w-24">Dropoff</th>
-                            <th class="px-4 py-3 text-left">Keterangan</th>
+                            <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Stop</th>
+                            <th class="px-4 py-3 text-center w-24 font-mono uppercase tracking-wider text-xs text-gray-500">Pickup</th>
+                            <th class="px-4 py-3 text-center w-24 font-mono uppercase tracking-wider text-xs text-gray-500">Dropoff</th>
+                            <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Keterangan</th>
                         </tr>
                     </thead>
                     <tbody id="stopsTableBody">
-                        <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Pilih rute terlebih dahulu</td></tr>
+                        <tr><td colspan="4" class="px-4 py-8 text-center text-gray-500 font-light">Pilih rute terlebih dahulu</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div id="pricingSummary" style="display:none;">
-                <h3 class="font-semibold mb-2">Harga yang sudah dikonfigurasi:</h3>
+                <h3 class="font-mono uppercase tracking-wider text-xs font-bold mb-2">Harga yang sudah dikonfigurasi:</h3>
                 <div id="pricingList" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
-                <p id="pricingWarning" class="text-red-500 text-sm mt-2 hidden">Masih ada kombinasi yang belum diisi harganya!</p>
+                <p id="pricingWarning" class="text-[#C1121F] text-sm mt-2 hidden font-medium">Masih ada kombinasi yang belum diisi harganya!</p>
             </div>
         </div>
 
         {{-- STEP 3: Pengaturan Pembayaran --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6" id="paymentSection" style="display:none;">
-            <h2 class="font-bold text-lg text-secondary mb-4">Pengaturan Pembayaran</h2>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm" id="paymentSection" style="display:none;">
+            <h2 class="font-bold text-lg text-[#111111] mb-4">Pengaturan Pembayaran</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="paymentMethodsContainer">
-                {{-- Online (Midtrans) - Selalu tersedia --}}
-                <div id="onlinePaymentCard" class="bg-blue-50 rounded-xl p-4 text-center border border-blue-200" style="display:none;">
+                <div id="onlinePaymentCard" class="bg-[#F5F5F5] rounded-[12px] p-4 text-center border border-[#E5E5E5]" style="display:none;">
                     <div class="text-2xl mb-2">💳</div>
-                    <p class="font-semibold text-blue-700 text-sm">Online (Midtrans)</p>
-                    <p class="text-xs text-blue-600 mt-1">Selalu tersedia</p>
+                    <p class="font-semibold text-[#111111] text-sm">Online (Midtrans)</p>
+                    <p class="text-xs text-gray-500 mt-1 font-light">Selalu tersedia</p>
                 </div>
                 
-                {{-- Warung GoMad - Selalu tersedia --}}
-                <div id="cashPaymentCard" class="bg-green-50 rounded-xl p-4 text-center border border-green-200" style="display:none;">
+                <div id="cashPaymentCard" class="bg-[#F5F5F5] rounded-[12px] p-4 text-center border border-[#E5E5E5]" style="display:none;">
                     <div class="text-2xl mb-2">🏪</div>
-                    <p class="font-semibold text-green-700 text-sm">Warung GoMad</p>
-                    <p class="text-xs text-green-600 mt-1">Selalu tersedia</p>
+                    <p class="font-semibold text-[#111111] text-sm">Warung GoMad</p>
+                    <p class="text-xs text-gray-500 mt-1 font-light">Selalu tersedia</p>
                 </div>
                 
-                {{-- COD - Dinamis --}}
-                <div id="codPaymentCard" class="rounded-xl p-4 text-center border bg-gray-50 border-gray-200" style="display:none;">
+                <div id="codPaymentCard" class="rounded-[12px] p-4 text-center border bg-[#F5F5F5] border-[#E5E5E5]" style="display:none;">
                     <div class="text-2xl mb-2">🚗</div>
                     <p class="font-semibold text-sm text-gray-700">COD (Bayar ke Sopir)</p>
                     
                     <div class="mt-3">
                         <label class="flex items-center justify-center gap-2 cursor-pointer">
                             <input type="checkbox" name="allow_cod" value="1" id="allowCod" 
-                                class="w-5 h-5 rounded border-gray-300 text-orange-600 focus:ring-orange-600">
-                            <span class="text-sm font-medium">Aktifkan COD</span>
+                                class="w-5 h-5 rounded border-[#E5E5E5] text-[#C1121F] focus:ring-[#C1121F]">
+                            <span class="text-sm font-medium text-[#111111]">Aktifkan COD</span>
                         </label>
                     </div>
                     
-                    <div id="codInfo" class="mt-3 bg-orange-100 rounded-lg p-3 text-xs text-orange-800 text-left" style="display:none;">
-                        <p class="font-medium mb-1">ℹ️ Informasi COD:</p>
-                        <ul class="list-disc list-inside space-y-1">
+                    <div id="codInfo" class="mt-3 bg-orange-50 border border-orange-200 rounded-lg p-3 text-xs text-orange-800 text-left" style="display:none;">
+                        <p class="font-mono uppercase tracking-wider text-xs font-medium mb-1">ℹ️ Informasi COD:</p>
+                        <ul class="list-disc list-inside space-y-1 font-light">
                             <li>Customer bayar tunai ke sopir saat penjemputan</li>
                             <li>Butuh saldo deposit: <strong id="codMinDepositLabel">Rp 0</strong></li>
                             <li>Saldo deposit tersedia: <strong>Rp {{ number_format($availableDeposit, 0, ',', '.') }}</strong></li>
@@ -211,9 +207,8 @@
                 </div>
             </div>
             
-            {{-- Info metode yang tidak tersedia --}}
-            <div id="unavailablePaymentsInfo" class="mt-4 bg-gray-50 rounded-xl p-3 text-sm text-gray-500 hidden">
-                <p>ℹ️ Beberapa metode pembayaran tidak tersedia untuk rute ini berdasarkan pengaturan admin.</p>
+            <div id="unavailablePaymentsInfo" class="mt-4 bg-[#F5F5F5] rounded-[12px] p-3 text-sm text-gray-500 hidden">
+                <p class="font-light">ℹ️ Beberapa metode pembayaran tidak tersedia untuk rute ini berdasarkan pengaturan admin.</p>
             </div>
         </div>
 
@@ -222,26 +217,24 @@
         <input type="hidden" name="pricing" id="pricingInput" value="[]">
 
         <div class="flex gap-4">
-            <button type="button" onclick="submitForm()" class="btn-primary">Buat Jadwal</button>
-            <a href="{{ route('agency.schedules.index') }}" class="btn-outline">Batal</a>
+            <button type="button" onclick="submitForm()" class="btn-gomad-primary">Buat Jadwal</button>
+            <a href="{{ route('agency.schedules.index') }}" class="btn-gomad-outline">Batal</a>
         </div>
     </form>
 </div>
 
 {{-- MODAL Input Harga --}}
-<div id="pricingModal" style="display:none;" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
-        <h3 class="font-bold text-lg mb-2">Isi Harga</h3>
-        <p class="text-sm text-gray-500 mb-4" id="modalInfo"></p>
+<div id="pricingModal" style="display:none;" class="fixed inset-0 bg-[#111111]/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[12px] shadow-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto border border-[#E5E5E5]">
+        <h3 class="font-bold text-lg text-[#111111] mb-2">Isi Harga</h3>
+        <p class="text-sm text-gray-500 font-light mb-4" id="modalInfo"></p>
         <div id="modalPairs"></div>
         <div class="flex gap-3 mt-4">
-            <button type="button" onclick="saveModalPricing()" class="flex-1 btn-primary">Simpan Harga</button>
-            <button type="button" onclick="closeModal()" class="flex-1 border border-gray-300 py-2 rounded-xl">Batal</button>
+            <button type="button" onclick="saveModalPricing()" class="flex-1 btn-gomad-primary">Simpan Harga</button>
+            <button type="button" onclick="closeModal()" class="flex-1 border border-[#E5E5E5] py-2 rounded-[12px]">Batal</button>
         </div>
     </div>
 </div>
-
-@endsection
 
 @push('scripts')
 <script>
@@ -557,3 +550,4 @@ document.addEventListener('DOMContentLoaded', function() {
 @endif
 </script>
 @endpush
+@endsection

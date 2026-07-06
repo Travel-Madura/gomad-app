@@ -8,22 +8,22 @@
 
 @if(!$agency)
 <div class="text-center py-12">
-    <div class="w-20 h-20 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+    <div class="w-20 h-20 bg-[#C1121F]/5 rounded-[12px] flex items-center justify-center mx-auto mb-4 border border-[#E5E5E5]">
         <span class="text-3xl">🏢</span>
     </div>
-    <h2 class="text-xl font-bold text-secondary mb-2">Setup Agency</h2>
-    <p class="text-gray-600 mb-6">Lengkapi data agency Anda untuk mulai beroperasi.</p>
-    <a href="{{ route('agency.setup') }}" class="btn-primary">Setup Sekarang</a>
+    <h2 class="text-xl font-bold text-[#111111] mb-2">Setup Agency</h2>
+    <p class="text-gray-600 font-light mb-6">Lengkapi data agency Anda untuk mulai beroperasi.</p>
+    <a href="{{ route('agency.setup') }}" class="btn-gomad-primary">Setup Sekarang</a>
 </div>
 
 @elseif(!$agency->is_verified)
 <div class="text-center py-12">
-    <div class="w-20 h-20 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+    <div class="w-20 h-20 bg-yellow-50 border border-yellow-200 rounded-[12px] flex items-center justify-center mx-auto mb-4">
         <span class="text-3xl">⏳</span>
     </div>
-    <h2 class="text-xl font-bold text-secondary mb-2">Menunggu Verifikasi</h2>
-    <p class="text-gray-600 max-w-md mx-auto mb-6">Agency Anda sedang dalam proses verifikasi. Lengkapi profil dan ajukan verifikasi untuk mengakses semua fitur.</p>
-    <a href="{{ route('agency.profile.edit') }}" class="btn-primary">Lengkapi Profil</a>
+    <h2 class="text-xl font-bold text-[#111111] mb-2">Menunggu Verifikasi</h2>
+    <p class="text-gray-600 max-w-md mx-auto mb-6 font-light">Agency Anda sedang dalam proses verifikasi. Lengkapi profil dan ajukan verifikasi untuk mengakses semua fitur.</p>
+    <a href="{{ route('agency.profile.edit') }}" class="btn-gomad-primary">Lengkapi Profil</a>
 </div>
 
 @else
@@ -37,7 +37,6 @@
     $activeVehicles = $agency->vehicles()->where('is_active', true)->count();
     $activeDrivers = $agency->drivers()->where('is_active', true)->count();
 
-    // Chart: Booking 7 hari terakhir
     $dailyBookings = [];
     $dailyLabels = [];
     for ($i = 6; $i >= 0; $i--) {
@@ -47,7 +46,6 @@
             ->whereDate('created_at', $date)->count();
     }
 
-    // Chart: Revenue 6 bulan terakhir
     $monthlyRevenue = [];
     $monthlyLabels = [];
     for ($i = 5; $i >= 0; $i--) {
@@ -64,34 +62,34 @@
 <div>
     {{-- Stats --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Saldo Tersedia</p>
-            <p class="text-xl font-bold text-primary-600 mt-1">Rp {{ number_format($balance['available_balance'], 0, ',', '.') }}</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Saldo Tersedia</p>
+            <p class="text-xl font-bold text-[#C1121F] mt-1">Rp {{ number_format($balance['available_balance'], 0, ',', '.') }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Jadwal Hari Ini</p>
-            <p class="text-2xl font-bold text-secondary mt-1">{{ $todaySchedules }}</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Jadwal Hari Ini</p>
+            <p class="text-2xl font-bold text-[#111111] mt-1">{{ $todaySchedules }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Booking Bulan Ini</p>
-            <p class="text-2xl font-bold text-secondary mt-1">{{ $monthBookings }}</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Booking Bulan Ini</p>
+            <p class="text-2xl font-bold text-[#111111] mt-1">{{ $monthBookings }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Revenue Bulan Ini</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Revenue Bulan Ini</p>
             <p class="text-lg font-bold text-green-600 mt-1">Rp {{ number_format($monthRevenue, 0, ',', '.') }}</p>
         </div>
     </div>
 
     {{-- Charts --}}
     <div class="grid md:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 class="font-bold text-secondary mb-4">📈 Booking 7 Hari Terakhir</h3>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 shadow-sm">
+            <h3 class="font-bold text-[#111111] mb-4">📈 Booking 7 Hari Terakhir</h3>
             <div class="relative" style="height: 280px;">
                 <canvas id="agencyDailyChart"></canvas>
             </div>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 class="font-bold text-secondary mb-4">💰 Revenue 6 Bulan Terakhir</h3>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 shadow-sm">
+            <h3 class="font-bold text-[#111111] mb-4">💰 Revenue 6 Bulan Terakhir</h3>
             <div class="relative" style="height: 280px;">
                 <canvas id="agencyRevenueChart"></canvas>
             </div>
@@ -100,21 +98,21 @@
 
     {{-- Quick Actions --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ route('agency.schedules.create') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition group">
-            <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform">📅</div>
-            <p class="font-semibold text-secondary text-sm">Buat Jadwal</p>
+        <a href="{{ route('agency.schedules.create') }}" class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 text-center shadow-sm hover:border-[#C1121F] transition-colors group">
+            <div class="w-12 h-12 bg-[#C1121F]/5 rounded-[12px] flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform border border-[#E5E5E5]">📅</div>
+            <p class="font-semibold text-[#111111] text-sm">Buat Jadwal</p>
         </a>
-        <a href="{{ route('agency.bookings.index') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition group">
-            <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform">🎫</div>
-            <p class="font-semibold text-secondary text-sm">Lihat Booking</p>
+        <a href="{{ route('agency.bookings.index') }}" class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 text-center shadow-sm hover:border-[#C1121F] transition-colors group">
+            <div class="w-12 h-12 bg-[#C1121F]/5 rounded-[12px] flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform border border-[#E5E5E5]">🎫</div>
+            <p class="font-semibold text-[#111111] text-sm">Lihat Booking</p>
         </a>
-        <a href="{{ route('agency.wallet.index') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition group">
-            <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform">💰</div>
-            <p class="font-semibold text-secondary text-sm">Dompet</p>
+        <a href="{{ route('agency.wallet.index') }}" class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 text-center shadow-sm hover:border-[#C1121F] transition-colors group">
+            <div class="w-12 h-12 bg-[#C1121F]/5 rounded-[12px] flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform border border-[#E5E5E5]">💰</div>
+            <p class="font-semibold text-[#111111] text-sm">Dompet</p>
         </a>
-        <a href="{{ route('agency.transfers.index') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition group">
-            <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform">🔄</div>
-            <p class="font-semibold text-secondary text-sm">Transfer</p>
+        <a href="{{ route('agency.transfers.index') }}" class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 text-center shadow-sm hover:border-[#C1121F] transition-colors group">
+            <div class="w-12 h-12 bg-[#C1121F]/5 rounded-[12px] flex items-center justify-center text-xl mx-auto mb-3 group-hover:scale-110 transition-transform border border-[#E5E5E5]">🔄</div>
+            <p class="font-semibold text-[#111111] text-sm">Transfer</p>
         </a>
     </div>
 </div>
@@ -125,7 +123,6 @@
 @if($agency && $agency->is_verified)
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Chart Daily Bookings
     const dailyCtx = document.getElementById('agencyDailyChart');
     if (dailyCtx) {
         new Chart(dailyCtx, {
@@ -135,12 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Booking',
                     data: @json($dailyBookings),
-                    borderColor: '#DC2626',
-                    backgroundColor: 'rgba(220, 38, 38, 0.05)',
+                    borderColor: '#C1121F',
+                    backgroundColor: 'rgba(193, 18, 31, 0.05)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#DC2626',
+                    pointBackgroundColor: '#C1121F',
                     pointBorderColor: '#FFFFFF',
                     pointBorderWidth: 2,
                     pointRadius: 5,
@@ -150,23 +147,31 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { 
+                        display: false,
+                        labels: { color: '#111111' } // Pastikan teks legend gelap
+                    } 
+                },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1, font: { family: 'League Spartan', size: 11 }, color: '#6B7280' },
-                        grid: { color: '#F3F4F6' },
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            stepSize: 1, 
+                            font: { family: 'Geist Sans', size: 11 }, 
+                            color: '#111111' // Warna teks sumbu Y
+                        }, 
+                        grid: { color: '#E5E5E5' } // Warna grid
                     },
-                    x: {
-                        ticks: { font: { family: 'League Spartan', size: 11 }, color: '#6B7280' },
-                        grid: { display: false },
+                    x: { 
+                        ticks: { font: { family: 'Geist Sans', size: 11 }, color: '#111111' }, 
+                        grid: { display: false } 
                     },
                 },
             },
         });
     }
 
-    // Chart Monthly Revenue
     const revCtx = document.getElementById('agencyRevenueChart');
     if (revCtx) {
         new Chart(revCtx, {
@@ -176,8 +181,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Revenue',
                     data: @json($monthlyRevenue),
-                    backgroundColor: 'rgba(220, 38, 38, 0.8)',
-                    borderColor: '#DC2626',
+                    backgroundColor: 'rgba(193, 18, 31, 0.8)',
+                    borderColor: '#C1121F',
                     borderWidth: 1,
                     borderRadius: 8,
                     borderSkipped: false,
@@ -187,7 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: { 
+                        display: false,
+                        labels: { color: '#111111' }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
@@ -200,18 +208,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            font: { family: 'League Spartan', size: 11 },
-                            color: '#6B7280',
+                            font: { family: 'Geist Sans', size: 11 },
+                            color: '#111111',
                             callback: function(val) {
                                 if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
                                 if (val >= 1000) return (val / 1000).toFixed(0) + 'K';
                                 return val;
                             }
                         },
-                        grid: { color: '#F3F4F6' },
+                        grid: { color: '#E5E5E5' },
                     },
                     x: {
-                        ticks: { font: { family: 'League Spartan', size: 11 }, color: '#6B7280' },
+                        ticks: { font: { family: 'Geist Sans', size: 11 }, color: '#111111' },
                         grid: { display: false },
                     },
                 },

@@ -8,7 +8,6 @@
 @php
     $cities = \App\Models\RouteStop::select('city_name')->distinct()->orderBy('city_name')->get();
     
-    // Data warung untuk peta (embed langsung)
     $mapWarungs = \App\Models\PaymentAgent::where('is_verified', true)
         ->whereNotNull('latitude')
         ->whereNotNull('longitude')
@@ -31,17 +30,16 @@
         <img src="{{ asset('images/hero.png') }}" alt="GoMad Travel" class="w-full h-full object-cover object-right">
         <div class="absolute inset-0 hero-gradient"></div>
     </div>
-    <div class="container-custom relative z-10 py-16 md:py-24">
-        <div class="max-w-xl">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-4">
-                Mobilitas <span class="text-primary-600">orèng Madhurâ</span>
-            </h1>
-            <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
-                Dijemput di rumah, diantar ke tujuan. Platform booking travel antar kota di Madura yang aman, nyaman, dan terpercaya.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="#search-form" class="btn-primary text-center text-lg">Pesan Sekarang</a>
-                <a href="{{ route('download-app') }}" class="btn-outline text-center text-lg">Download App</a>
+    
+    <div class="container-custom relative z-10">
+        <div class="py-8 md:py-24">
+            <div class="w-full md:w-1/2 lg:w-2/5">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-4">
+                    Mobilitas <span class="text-primary-600">orèng Madhurâ</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+                    Dijemput di rumah, diantar ke tujuan. Platform booking travel antar kota di Madura yang aman, nyaman, dan terpercaya.
+                </p>
             </div>
         </div>
     </div>
@@ -99,11 +97,10 @@
             <h2 class="text-3xl md:text-4xl font-bold text-secondary mb-4">Layanan GoMad</h2>
             <p class="text-gray-600 max-w-2xl mx-auto">Pilih layanan yang sesuai dengan kebutuhan perjalanan Anda</p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             <div class="card p-6 text-center group"><div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform">🚐</div><h3 class="font-bold text-secondary mb-2">Ekonomi</h3><p class="text-xs text-gray-500 leading-relaxed">Mobil 8 seat, max overload +2, bagasi 15kg/orang</p></div>
             <div class="card p-6 text-center group"><div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform">🚗</div><h3 class="font-bold text-secondary mb-2">Premium</h3><p class="text-xs text-gray-500 leading-relaxed">8 seat strict, bagasi 20kg/orang, lebih nyaman</p></div>
             <div class="card p-6 text-center group"><div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform">🚙</div><h3 class="font-bold text-secondary mb-2">Charter</h3><p class="text-xs text-gray-500 leading-relaxed">Sewa mobil + supir, harga flat per mobil</p></div>
-            <div class="card p-6 text-center group"><div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform">🔑</div><h3 class="font-bold text-secondary mb-2">Rental</h3><p class="text-xs text-gray-500 leading-relaxed">Sewa mobil tanpa supir, bebas berkendara</p></div>
             <div class="card p-6 text-center group border-primary-200"><div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform">🏪</div><h3 class="font-bold text-secondary mb-2">Warung GoMad</h3><p class="text-xs text-gray-500 leading-relaxed">Bayar cash di warung terdekat, tanpa rekening</p></div>
         </div>
     </div>
@@ -120,7 +117,7 @@
             @forelse($popularRoutes ?? [] as $route)
             <div class="card overflow-hidden group cursor-pointer">
                 @if($route->photo)
-                <div class="h-40 overflow-hidden"><img src="{{ asset('storage/' . $route->photo) }}" alt="{{ $route->route_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                <div class="h-40 overflow-hidden"><img src="{{  $route->photo }}" alt="{{ $route->route_name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"></div>
                 @else
                 <div class="h-40 bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center"><span class="text-4xl">🗺️</span></div>
                 @endif
@@ -155,7 +152,7 @@
 
         <div class="grid lg:grid-cols-2 gap-8">
             {{-- Pembayaran Online - Logo Slider --}}
-            <div class="card p-8">
+            <div class="card p-6 md:p-8 overflow-hidden">
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-3">💳</div>
                     <h3 class="font-bold text-xl text-secondary mb-2">Pembayaran Online</h3>
@@ -164,11 +161,11 @@
                 
                 <div class="mb-6">
                     <p class="text-xs font-medium text-gray-500 uppercase mb-3 text-center">Transfer Bank</p>
-                    <div class="overflow-hidden relative" x-data="logoSlider()">
-                        <div class="flex gap-6 transition-transform duration-1000" :style="'transform: translateX(-' + offset + 'px)'">
-                            <template x-for="i in 2" :key="i">
+                    <div class="overflow-hidden relative w-full" x-data="logoSlider()">
+                        <div class="flex gap-3 md:gap-4 transition-transform duration-1000" :style="'transform: translateX(-' + offset + 'px)'">
+                            <template x-for="i in 3" :key="i">
                                 <template x-for="logo in logos" :key="logo.name + '-' + i">
-                                    <div class="flex-shrink-0 w-20 h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-3 hover:shadow-md transition">
+                                    <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-2 md:p-3 hover:shadow-md transition">
                                         <img :src="logo.src" :alt="logo.name" class="max-w-full max-h-full object-contain" :title="logo.name">
                                     </div>
                                 </template>
@@ -179,11 +176,11 @@
 
                 <div>
                     <p class="text-xs font-medium text-gray-500 uppercase mb-3 text-center">E-Wallet & QRIS</p>
-                    <div class="overflow-hidden relative" x-data="ewalletSlider()">
-                        <div class="flex gap-6 transition-transform duration-1000" :style="'transform: translateX(-' + offset + 'px)'">
-                            <template x-for="i in 2" :key="i">
+                    <div class="overflow-hidden relative w-full" x-data="ewalletSlider()">
+                        <div class="flex gap-3 md:gap-4 transition-transform duration-1000" :style="'transform: translateX(-' + offset + 'px)'">
+                            <template x-for="i in 3" :key="i">
                                 <template x-for="logo in logos" :key="logo.name + '-' + i">
-                                    <div class="flex-shrink-0 w-20 h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-3 hover:shadow-md transition">
+                                    <div class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl border border-gray-100 flex items-center justify-center p-2 md:p-3 hover:shadow-md transition">
                                         <img :src="logo.src" :alt="logo.name" class="max-w-full max-h-full object-contain" :title="logo.name">
                                     </div>
                                 </template>
@@ -194,13 +191,13 @@
             </div>
 
             {{-- Warung GoMad - Map --}}
-            <div class="card p-8">
+            <div class="card p-6 md:p-8">
                 <div class="text-center mb-6">
                     <div class="text-4xl mb-3">🏪</div>
                     <h3 class="font-bold text-xl text-secondary mb-2">Warung GoMad</h3>
                     <p class="text-sm text-gray-500">Bayar cash di warung terdekat</p>
                 </div>
-                <div id="homeWarungMap" style="height: 350px;" class="rounded-xl border border-gray-200 mb-4"></div>
+                <div id="homeWarungMap" style="height: 350px; z-index: 1;" class="rounded-xl border border-gray-200 mb-4 w-full"></div>
                 <p class="text-xs text-gray-500 text-center">{{ $mapWarungs->count() }}+ Warung GoMad tersebar di Madura dan kota tujuan</p>
             </div>
         </div>
@@ -214,7 +211,7 @@
 function logoSlider() {
     return {
         offset: 0,
-        speed: 0.5,
+        speed: 0.4,
         logos: [
             { name: 'BCA', src: '{{ asset("images/banks/bca.svg") }}' },
             { name: 'BNI', src: '{{ asset("images/banks/bni.svg") }}' },
@@ -229,7 +226,9 @@ function logoSlider() {
         animate() {
             setInterval(() => {
                 this.offset += this.speed;
-                if (this.offset >= this.logos.length * 104) this.offset = 0;
+                // Reset based on logo width + gap: mobile 64+12=76, desktop 80+16=96
+                const logoWidth = window.innerWidth < 768 ? 76 : 96;
+                if (this.offset >= this.logos.length * logoWidth) this.offset = 0;
             }, 20);
         }
     }
@@ -238,7 +237,7 @@ function logoSlider() {
 function ewalletSlider() {
     return {
         offset: 0,
-        speed: 0.5,
+        speed: 0.4,
         logos: [
             { name: 'GoPay', src: '{{ asset("images/ewallet/gopay.svg") }}' },
             { name: 'OVO', src: '{{ asset("images/ewallet/ovo.svg") }}' },
@@ -248,17 +247,18 @@ function ewalletSlider() {
             { name: 'LinkAja', src: '{{ asset("images/ewallet/linkaja.svg") }}' },
             { name: 'SPay', src: '{{ asset("images/ewallet/spay.svg") }}' },
         ],
-        init() { this.offset = this.logos.length * 104; this.animateReverse(); },
+        init() { this.offset = this.logos.length * (window.innerWidth < 768 ? 76 : 96); this.animateReverse(); },
         animateReverse() {
             setInterval(() => {
                 this.offset -= this.speed;
-                if (this.offset <= 0) this.offset = this.logos.length * 104;
+                const logoWidth = window.innerWidth < 768 ? 76 : 96;
+                if (this.offset <= 0) this.offset = this.logos.length * logoWidth;
             }, 20);
         }
     }
 }
 
-// Home Warung Map - Data langsung dari Blade
+// Home Warung Map
 document.addEventListener('DOMContentLoaded', function() {
     var mapEl = document.getElementById('homeWarungMap');
     if (!mapEl) return;
@@ -270,13 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
         maxZoom: 18,
     }).addTo(map);
 
-    // Data warung langsung dari server
     var warungs = @json($mapWarungs);
     
-    if (warungs.length === 0) {
-        console.log('No warungs data');
-        return;
-    }
+    if (warungs.length === 0) return;
 
     var bounds = L.latLngBounds();
     var count = 0;
@@ -308,8 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
         bounds.extend([lat, lng]);
         count++;
     });
-    
-    console.log('Total markers: ' + count);
     
     if (count > 0) {
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });

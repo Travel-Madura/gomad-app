@@ -6,70 +6,97 @@
 
 @section('content')
 <div class="section mt-10 mb-20">
-    <div class="container-custom">
+    <div class="container-magazine">
         @if(!isset($booking))
         <div class="max-w-lg mx-auto">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-10 h-10 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-                </div>
-                <h1 class="text-2xl font-bold text-secondary mb-2">Cek E-Ticket</h1>
-                <p class="text-gray-600">Masukkan kode booking Anda</p>
+            <div class="text-center mb-8 mt-[-4rem] md:mt-[-6rem]">
+                <h1 class="text-3xl font-bold text-[#111111] mb-2">Cek E-Ticket</h1>
+                <p class="text-gray-500 font-light">Masukkan kode booking Anda</p>
             </div>
-            <div class="card p-6 md:p-8">
+            
+            <div class="card-gomad p-6 md:p-8 border-[#E5E5E5]">
                 <form action="{{ route('eticket.check') }}" method="POST" class="mb-6">
                     @csrf
-                    <label class="block text-sm font-medium text-secondary mb-2">Kode Booking</label>
-                    <div class="flex gap-3">
-                        <input type="text" name="booking_code" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl font-mono uppercase tracking-wider focus:ring-2 focus:ring-primary-600 bg-gray-50" placeholder="GM-YYYYMMDD-XXXX" required>
-                        <button type="submit" class="btn-primary">Cek</button>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Kode Booking</label>
+                    <div class="flex gap-3 items-end">
+                        <input type="text" name="booking_code" class="flex-1 px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-mono text-lg uppercase tracking-wider transition-colors" placeholder="GM-YYYYMMDD-XXXX" required>
+                        <button type="submit" class="btn-gomad-primary py-2.5 px-6 text-sm flex-shrink-0">Cek</button>
                     </div>
                 </form>
-                <div class="border-t border-gray-100 pt-6">
-                    <p class="text-sm text-gray-600 mb-4">Atau kirim ke email</p>
-                    <form action="{{ route('eticket.send') }}" method="POST" class="space-y-3">
+                
+                <div class="border-t border-[#E5E5E5] pt-6">
+                    <p class="text-xs font-mono uppercase tracking-wider text-gray-500 mb-4">Atau kirim ke email</p>
+                    <form action="{{ route('eticket.send') }}" method="POST" class="space-y-4">
                         @csrf
-                        <input type="text" name="booking_code" class="w-full px-4 py-3 border border-gray-200 rounded-xl font-mono uppercase bg-gray-50" placeholder="Kode Booking" required>
-                        <input type="email" name="email" class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50" placeholder="nama@email.com" required>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Kirim ke Email</button>
+                        <div>
+                            <input type="text" name="booking_code" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-mono uppercase" placeholder="Kode Booking" required>
+                        </div>
+                        <div>
+                            <input type="email" name="email" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent" placeholder="nama@email.com" required>
+                        </div>
+                        <button type="submit" class="w-full bg-[#C1121F] text-white py-3 rounded-[12px] font-medium hover:bg-[#8A0F18] transition">Kirim ke Email</button>
                     </form>
                 </div>
-                <div class="mt-6 bg-blue-50 rounded-xl p-4 text-sm text-blue-800">
-                    <p class="font-medium mb-1">Informasi</p>
-                    <ul class="list-disc list-inside space-y-1 text-blue-700"><li>Kode booking ada di email konfirmasi</li><li>Format: <strong>GM-YYYYMMDD-XXXX</strong></li></ul>
+                
+                <div class="mt-6 bg-[#F5F5F5] rounded-[12px] p-4 text-sm text-[#111111] border border-[#E5E5E5]">
+                    <p class="font-mono uppercase tracking-wider font-medium mb-1">Informasi</p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-500 font-light text-xs"><li>Kode booking ada di email konfirmasi</li><li>Format: <strong class="font-mono text-[#C1121F]">GM-YYYYMMDD-XXXX</strong></li></ul>
                 </div>
             </div>
         </div>
         @else
         <div class="max-w-2xl mx-auto">
-            <a href="{{ route('eticket.public') }}" class="text-primary-600 text-sm mb-4 inline-block">← Cek Lagi</a>
-            <div class="card border-2 border-primary-600 p-6 md:p-8">
-                <div class="text-center border-b-2 border-dashed border-gray-200 pb-4 mb-4">
-                    <img src="{{ asset('images/logo.svg') }}" alt="GoMad" class="h-8 mx-auto mb-2">
-                    <p class="text-sm text-gray-500">{{ $booking->booking_code }}</p>
+            <a href="{{ route('eticket.public') }}" class="text-[#C1121F] text-sm mb-4 inline-block hover:underline">← Cek Lagi</a>
+            <div class="card-gomad border-2 border-[#C1121F] p-6 md:p-8 bg-white">
+                <div class="text-center border-b-2 border-dashed border-[#E5E5E5] pb-4 mb-4">
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <span class="text-2xl font-bold tracking-tighter">GO</span>
+                        <span class="text-[#C1121F] text-2xl font-bold tracking-tighter">MAD</span>
+                    </div>
+                    <p class="text-xs font-mono text-gray-400 tracking-wider">{{ $booking->booking_code }}</p>
                 </div>
+                
                 <div class="space-y-3 text-sm">
-                    <div class="flex justify-between"><span class="text-gray-500">Rute</span><span class="font-semibold">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Tanggal</span><span class="font-semibold">{{ $booking->schedule->departure_date->format('d M Y') }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Jam</span><span class="font-semibold">{{ $booking->schedule->departure_time }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Agency</span><span class="font-semibold">{{ $booking->schedule->agency->agency_name ?? '-' }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Kendaraan</span><span class="font-semibold">{{ $booking->schedule->vehicle->plate_number ?? '-' }}</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Total</span><span class="font-bold text-primary-600">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span></div>
+                    <div class="flex justify-between border-b border-[#F5F5F5] pb-1"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Rute</span><span class="font-semibold text-[#111111]">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</span></div>
+                    <div class="flex justify-between border-b border-[#F5F5F5] pb-1"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Tanggal</span><span class="font-semibold text-[#111111]">{{ $booking->schedule->departure_date->format('d M Y') }}</span></div>
+                    <div class="flex justify-between border-b border-[#F5F5F5] pb-1"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Jam</span><span class="font-semibold text-[#111111]">{{ $booking->schedule->departure_time }}</span></div>
+                    <div class="flex justify-between border-b border-[#F5F5F5] pb-1"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Agency</span><span class="font-semibold text-[#111111]">{{ $booking->schedule->agency->agency_name ?? '-' }}</span></div>
+                    <div class="flex justify-between border-b border-[#F5F5F5] pb-1"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Kendaraan</span><span class="font-semibold text-[#111111]">{{ $booking->schedule->vehicle->plate_number ?? '-' }}</span></div>
+                    <div class="flex justify-between pt-2"><span class="text-gray-500 font-mono uppercase tracking-wider text-xs">Total</span><span class="font-bold text-[#C1121F] font-mono text-lg">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span></div>
                 </div>
-                <div class="border-t border-dashed border-gray-200 pt-4 mt-4">
-                    <h4 class="font-semibold mb-2">Penumpang ({{ $booking->total_passengers }})</h4>
-                    @foreach($booking->passengers as $p)<div class="flex justify-between text-sm py-1"><span>{{ $p->passenger_name }}</span><span class="text-gray-500">Seat {{ $p->seat_number }}</span></div>@endforeach
+                
+                <div class="border-t border-dashed border-[#E5E5E5] pt-4 mt-4">
+                    <h4 class="font-mono uppercase tracking-wider text-xs font-semibold mb-2">Penumpang ({{ $booking->total_passengers }})</h4>
+                    @foreach($booking->passengers as $p)<div class="flex justify-between text-sm py-1 border-b border-[#F5F5F5] last:border-0"><span class="text-[#111111]">{{ $p->passenger_name }}</span><span class="text-gray-400 font-mono text-xs">Seat {{ $p->seat_number }}</span></div>@endforeach
                 </div>
-                <div class="border-t border-dashed border-gray-200 pt-4 mt-4"><div class="grid grid-cols-2 gap-4 text-sm"><div><span class="text-gray-500 text-xs">Jemput</span><p class="font-medium">{{ $booking->pickup_address }}</p></div><div><span class="text-gray-500 text-xs">Tujuan</span><p class="font-medium">{{ $booking->destination_address }}</p></div></div></div>
-                <div class="border-t-2 border-dashed border-gray-200 pt-4 mt-4 text-center"><p class="text-xs text-gray-400">E-Ticket resmi GoMad</p><p class="text-xs text-gray-400">{{ now()->format('d M Y H:i') }}</p></div>
+                
+                <div class="border-t border-dashed border-[#E5E5E5] pt-4 mt-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div><span class="text-gray-400 font-mono uppercase tracking-wider text-[10px]">Jemput</span><p class="font-medium text-[#111111] mt-1">{{ $booking->pickup_address }}</p></div>
+                        <div><span class="text-gray-400 font-mono uppercase tracking-wider text-[10px]">Tujuan</span><p class="font-medium text-[#111111] mt-1">{{ $booking->destination_address }}</p></div>
+                    </div>
+                </div>
+                
+                <div class="border-t-2 border-dashed border-[#E5E5E5] pt-4 mt-4 text-center">
+                    <p class="text-[10px] font-mono uppercase tracking-widest text-gray-400">E-Ticket resmi GoMad</p>
+                    <p class="text-[10px] font-mono text-gray-400">{{ now()->format('d M Y H:i') }}</p>
+                </div>
             </div>
-            <div class="flex gap-4 mt-6 justify-center"><button onclick="window.print()" class="btn-primary">Cetak</button><a href="{{ route('eticket.public') }}" class="btn-outline">Cek Lagi</a></div>
+            
+            <div class="flex gap-4 mt-6 justify-center">
+                <button onclick="window.print()" class="btn-gomad-primary">Cetak</button>
+                <a href="{{ route('eticket.public') }}" class="btn-gomad-outline border-[#C1121F] text-[#C1121F] hover:bg-[#C1121F] hover:text-white">Cek Lagi</a>
+            </div>
+            
             @guest
-            <div class="card p-6 mt-6 max-w-lg mx-auto"><h3 class="font-bold text-secondary mb-3">Kirim ke Email</h3>
-                <form action="{{ route('eticket.send') }}" method="POST" class="flex gap-3">@csrf
+            <div class="card-gomad p-6 mt-6 max-w-lg mx-auto border-[#E5E5E5]">
+                <h3 class="font-mono uppercase tracking-wider text-sm font-bold mb-4">Kirim ke Email</h3>
+                <form action="{{ route('eticket.send') }}" method="POST" class="flex gap-3 items-end">@csrf
                     <input type="hidden" name="booking_code" value="{{ $booking->booking_code }}">
-                    <input type="email" name="email" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50" placeholder="nama@email.com" required>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700">Kirim</button>
+                    <div class="flex-1">
+                        <input type="email" name="email" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent" placeholder="nama@email.com" required>
+                    </div>
+                    <button type="submit" class="bg-[#C1121F] text-white px-6 py-2.5 rounded-[12px] font-medium hover:bg-[#8A0F18] flex-shrink-0">Kirim</button>
                 </form>
             </div>
             @endguest

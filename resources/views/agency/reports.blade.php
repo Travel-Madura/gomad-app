@@ -11,7 +11,6 @@
     $walletService = app(\App\Services\WalletService::class);
     $balance = $walletService->getBalance($agency);
 
-    // Chart revenue 6 bulan
     $monthlyRevenue = [];
     $monthlyLabels = [];
     for ($i = 5; $i >= 0; $i--) {
@@ -24,7 +23,6 @@
             ->sum('total_price');
     }
 
-    // Chart booking per rute (top 5)
     $topRoutes = $agency->schedules()
         ->selectRaw('route_id, count(*) as booking_count')
         ->whereHas('bookings')
@@ -38,43 +36,42 @@
 @endphp
 
 <div>
-    <h1 class="text-lg font-bold text-secondary mb-6">Laporan</h1>
+    <h1 class="text-lg font-bold text-[#111111] mb-6">Laporan</h1>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Total Booking</p>
-            <p class="text-2xl font-bold text-secondary mt-1">{{ $totalBookings }}</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Total Booking</p>
+            <p class="text-2xl font-bold text-[#111111] mt-1">{{ $totalBookings }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Booking Selesai</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Booking Selesai</p>
             <p class="text-2xl font-bold text-green-600 mt-1">{{ $completedBookings }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Total Revenue</p>
-            <p class="text-lg font-bold text-primary-600 mt-1">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Total Revenue</p>
+            <p class="text-lg font-bold text-[#C1121F] mt-1">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <p class="text-xs text-gray-500 uppercase font-medium">Saldo Tersedia</p>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm">
+            <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Saldo Tersedia</p>
             <p class="text-lg font-bold text-green-600 mt-1">Rp {{ number_format($balance['available_balance'], 0, ',', '.') }}</p>
         </div>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 class="font-bold text-secondary mb-4">💰 Revenue 6 Bulan Terakhir</h3>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 shadow-sm">
+            <h3 class="font-bold text-[#111111] mb-4">💰 Revenue 6 Bulan Terakhir</h3>
             <div class="relative" style="height: 320px;">
                 <canvas id="agencyReportRevenue"></canvas>
             </div>
         </div>
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 class="font-bold text-secondary mb-4">🎫 Booking per Rute</h3>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 shadow-sm">
+            <h3 class="font-bold text-[#111111] mb-4">🎫 Booking per Rute</h3>
             <div class="relative" style="height: 320px;">
                 <canvas id="agencyReportRoutes"></canvas>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
 @push('scripts')
 <script>
@@ -88,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Revenue',
                     data: @json($monthlyRevenue),
-                    backgroundColor: 'rgba(220, 38, 38, 0.8)',
-                    borderColor: '#DC2626',
+                    backgroundColor: 'rgba(193, 18, 31, 0.8)',
+                    borderColor: '#C1121F',
                     borderWidth: 1,
                     borderRadius: 8,
                     borderSkipped: false,
@@ -98,17 +95,31 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: ctx => 'Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) } }
+                plugins: { 
+                    legend: { 
+                        display: false,
+                        labels: { color: '#111111' } 
+                    }, 
+                    tooltip: { 
+                        callbacks: { 
+                            label: ctx => 'Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) 
+                        } 
+                    } 
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { font: { family: 'League Spartan', size: 11 }, color: '#6B7280', callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v },
-                        grid: { color: '#F3F4F6' },
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            font: { family: 'Geist Sans', size: 11 }, 
+                            color: '#111111', 
+                            callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v 
+                        }, 
+                        grid: { color: '#E5E5E5' } 
                     },
-                    x: { ticks: { font: { family: 'League Spartan', size: 11 }, color: '#6B7280' }, grid: { display: false } },
+                    x: { 
+                        ticks: { font: { family: 'Geist Sans', size: 11 }, color: '#111111' }, 
+                        grid: { display: false } 
+                    },
                 },
             },
         });
@@ -123,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Booking',
                     data: @json($routeCounts),
-                    backgroundColor: ['#DC2626', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6'],
+                    backgroundColor: ['#C1121F', '#F59E0B', '#3B82F6', '#10B981', '#8B5CF6'],
                     borderRadius: 8,
                     borderSkipped: false,
                 }]
@@ -132,10 +143,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { 
+                        display: false,
+                        labels: { color: '#111111' } 
+                    } 
+                },
                 scales: {
-                    x: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'League Spartan', size: 11 }, color: '#6B7280' }, grid: { color: '#F3F4F6' } },
-                    y: { ticks: { font: { family: 'League Spartan', size: 11 }, color: '#4B5563' }, grid: { display: false } },
+                    x: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            stepSize: 1, 
+                            font: { family: 'Geist Sans', size: 11 }, 
+                            color: '#111111' 
+                        }, 
+                        grid: { color: '#E5E5E5' } 
+                    },
+                    y: { 
+                        ticks: { font: { family: 'Geist Sans', size: 11 }, color: '#4B5563' }, 
+                        grid: { display: false } 
+                    },
                 },
             },
         });
@@ -143,3 +170,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+@endsection

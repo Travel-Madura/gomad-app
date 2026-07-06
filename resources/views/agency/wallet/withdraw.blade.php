@@ -9,40 +9,40 @@
 @endphp
 
 <div>
-    <h1 class="text-lg font-bold text-secondary mb-6">Tarik Dana</h1>
+    <h1 class="text-lg font-bold text-[#111111] mb-6">Tarik Dana</h1>
 
-    <div class="bg-primary-50 border border-primary-200 rounded-2xl p-5 mb-6">
-        <p class="text-xs text-gray-500 uppercase font-medium mb-1">Saldo Tersedia</p>
-        <p class="text-2xl font-bold text-primary-600">Rp {{ number_format($balance['available_balance'], 0, ',', '.') }}</p>
+    <div class="bg-[#C1121F]/5 border border-[#C1121F] rounded-[12px] p-5 mb-6">
+        <p class="text-[10px] font-mono uppercase tracking-wider text-gray-600 font-medium mb-1">Saldo Tersedia</p>
+        <p class="text-2xl font-bold text-[#C1121F]">Rp {{ number_format($balance['available_balance'], 0, ',', '.') }}</p>
     </div>
 
-    <form action="{{ route('agency.withdrawals.store') }}" method="POST" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+    <form action="{{ route('agency.withdrawals.store') }}" method="POST" class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 shadow-sm space-y-4">
         @csrf
         <div>
-            <label class="block text-sm font-medium text-secondary mb-1">Jumlah (Rp) <span class="text-red-500">*</span></label>
+            <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Jumlah (Rp) <span class="text-[#C1121F]">*</span></label>
             <input type="number" name="amount"
-                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" 
+                   class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" 
                    min="{{ config('gomad.minimal_withdrawal', 100000) }}" 
                    max="{{ (int) $balance['available_balance'] }}" required>
-            <p class="text-xs text-gray-500 mt-1">Minimal: Rp {{ number_format(config('gomad.minimal_withdrawal', 100000), 0, ',', '.') }}</p>
+            <p class="text-[10px] text-gray-400 mt-1 font-light">Minimal: Rp {{ number_format(config('gomad.minimal_withdrawal', 100000), 0, ',', '.') }}</p>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondary mb-1">Nama Bank <span class="text-red-500">*</span></label>
+            <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Nama Bank <span class="text-[#C1121F]">*</span></label>
             <input type="text" name="bank_name"
-                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50"
+                   class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition"
                    placeholder="Contoh: BCA, BNI, BRI" required>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondary mb-1">Nomor Rekening <span class="text-red-500">*</span></label>
+            <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Nomor Rekening <span class="text-[#C1121F]">*</span></label>
             <input type="text" name="bank_account_number"
-                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                   class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
         </div>
         <div>
-            <label class="block text-sm font-medium text-secondary mb-1">Nama Pemilik Rekening <span class="text-red-500">*</span></label>
+            <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Nama Pemilik Rekening <span class="text-[#C1121F]">*</span></label>
             <input type="text" name="bank_account_name"
-                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50" required>
+                   class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
         </div>
-        <button type="submit" class="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition active:scale-95">
+        <button type="submit" class="w-full btn-gomad-primary py-3 rounded-[12px] font-semibold">
             AJUKAN PENARIKAN
         </button>
     </form>

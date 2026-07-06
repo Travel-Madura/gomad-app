@@ -2,51 +2,50 @@
 
 @section('title', 'Booking')
 @section('content')
-<!-- File: resources/views/admin/bookings/index.blade.php -->
-<!-- Deskripsi: Halaman daftar booking admin -->
-
 <div>
-    <h1 class="text-2xl font-bold text-gray-900 mb-6">Daftar Booking</h1>
+    <h1 class="text-2xl font-bold text-[#111111] mb-6">Daftar Booking</h1>
 
-    <div class="bg-white rounded-xl shadow overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3 text-left">Kode</th>
-                    <th class="px-4 py-3 text-left">Customer</th>
-                    <th class="px-4 py-3 text-left">Rute</th>
-                    <th class="px-4 py-3 text-left">Agency</th>
-                    <th class="px-4 py-3 text-center">Status</th>
-                    <th class="px-4 py-3 text-right">Total</th>
-                    <th class="px-4 py-3 text-right">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($bookings as $booking)
-                <tr class="border-t">
-                    <td class="px-4 py-3 font-mono text-xs">{{ $booking->booking_code }}</td>
-                    <td class="px-4 py-3">{{ $booking->customer->name ?? '-' }}</td>
-                    <td class="px-4 py-3 text-xs">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</td>
-                    <td class="px-4 py-3 text-xs">{{ $booking->schedule->agency->agency_name ?? '-' }}</td>
-                    <td class="px-4 py-3 text-center">
-                        <span class="px-2 py-1 rounded text-xs 
-                            @if($booking->status == 'paid') bg-green-100 text-green-800
-                            @elseif($booking->status == 'pending') bg-yellow-100 text-yellow-800
-                            @elseif($booking->status == 'cancelled') bg-red-100 text-red-800
-                            @else bg-blue-100 text-blue-800 @endif">
-                            {{ $booking->status_label }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-right">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <a href="{{ route('admin.bookings.show', $booking) }}" class="text-primary hover:underline text-sm">Detail</a>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">Tidak ada booking.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-[#F5F5F5] border-b border-[#E5E5E5]">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Kode</th>
+                        <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Customer</th>
+                        <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Rute</th>
+                        <th class="px-4 py-3 text-left font-mono uppercase tracking-wider text-xs text-gray-500">Agency</th>
+                        <th class="px-4 py-3 text-center font-mono uppercase tracking-wider text-xs text-gray-500">Status</th>
+                        <th class="px-4 py-3 text-right font-mono uppercase tracking-wider text-xs text-gray-500">Total</th>
+                        <th class="px-4 py-3 text-right font-mono uppercase tracking-wider text-xs text-gray-500">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($bookings as $booking)
+                    <tr class="border-t border-[#E5E5E5] hover:bg-[#F5F5F5]">
+                        <td class="px-4 py-3 font-mono text-[#111111]">{{ $booking->booking_code }}</td>
+                        <td class="px-4 py-3 text-[#111111]">{{ $booking->customer->name ?? '-' }}</td>
+                        <td class="px-4 py-3 text-[10px] font-mono text-gray-500">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</td>
+                        <td class="px-4 py-3 text-[10px] font-mono text-gray-500">{{ $booking->schedule->agency->agency_name ?? '-' }}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="px-2 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider border
+                                @if($booking->status == 'paid') bg-green-50 text-green-700 border-green-200
+                                @elseif($booking->status == 'pending') bg-yellow-50 text-yellow-700 border-yellow-200
+                                @elseif($booking->status == 'cancelled') bg-red-50 text-red-700 border-red-200
+                                @else bg-blue-50 text-blue-700 border-blue-200 @endif">
+                                {{ $booking->status_label }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-right font-mono text-[#C1121F]">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <a href="{{ route('admin.bookings.show', $booking) }}" class="text-[#C1121F] hover:underline text-sm font-medium">Detail</a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500 font-light">Tidak ada booking.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="mt-4">{{ $bookings->links() }}</div>
 </div>

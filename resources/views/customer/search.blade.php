@@ -3,6 +3,7 @@
 @section('title', 'Cari Jadwal')
 @section('content')
 @php
+    // Logika PHP Anda tetap sama
     $allCities = \App\Models\RouteStop::select('city_name')->distinct()->orderBy('city_name')->get();
     $agencies = \App\Models\Agency::where('is_verified', true)->orderBy('agency_name')->get();
     $months = [];
@@ -20,50 +21,44 @@
     $schedules = $query->orderBy('departure_date')->orderBy('departure_time')->paginate(12);
 @endphp
 
-<div class="container-custom py-8">
-    <h1 class="text-2xl font-bold text-secondary mb-6">Cari Jadwal Travel</h1>
+<div class="container-magazine py-8">
+    <h1 class="text-2xl font-bold text-[#111111] mb-6">Cari Jadwal Travel</h1>
 
     <div class="grid lg:grid-cols-4 gap-8">
         {{-- Filter Sidebar --}}
         <div class="lg:col-span-1">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sticky top-20">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-secondary">Filter</h3>
+            <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 sticky top-20 shadow-sm">
+                <div class="flex items-center justify-between mb-4 border-b border-[#E5E5E5] pb-3">
+                    <h3 class="font-mono uppercase tracking-wider text-xs font-bold text-[#111111]">Filter</h3>
                     @if(request()->anyFilled(['origin', 'destination', 'month', 'travel_class', 'agency_id']))
-                    <a href="{{ route('customer.search') }}" class="text-xs text-primary-600 hover:underline">Reset</a>
+                    <a href="{{ route('customer.search') }}" class="text-xs text-[#C1121F] hover:underline">Reset</a>
                     @endif
                 </div>
-                <form action="{{ route('customer.search') }}" method="GET" class="space-y-3">
+                <form action="{{ route('customer.search') }}" method="GET" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Kota Asal</label>
-                        <select name="origin" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+                        <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Asal</label>
+                        <select name="origin" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111]">
                             <option value="">Semua</option>
-                            @foreach($allCities as $c)
-                            <option value="{{ $c->city_name }}" {{ request('origin') == $c->city_name ? 'selected' : '' }}>{{ $c->city_name }}</option>
-                            @endforeach
+                            @foreach($allCities as $c)<option value="{{ $c->city_name }}" {{ request('origin') == $c->city_name ? 'selected' : '' }}>{{ $c->city_name }}</option>@endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Kota Tujuan</label>
-                        <select name="destination" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+                        <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Tujuan</label>
+                        <select name="destination" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111]">
                             <option value="">Semua</option>
-                            @foreach($allCities as $c)
-                            <option value="{{ $c->city_name }}" {{ request('destination') == $c->city_name ? 'selected' : '' }}>{{ $c->city_name }}</option>
-                            @endforeach
+                            @foreach($allCities as $c)<option value="{{ $c->city_name }}" {{ request('destination') == $c->city_name ? 'selected' : '' }}>{{ $c->city_name }}</option>@endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Bulan</label>
-                        <select name="month" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+                        <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Bulan</label>
+                        <select name="month" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111]">
                             <option value="">Semua</option>
-                            @foreach($months as $m)
-                            <option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>{{ $m['label'] }}</option>
-                            @endforeach
+                            @foreach($months as $m)<option value="{{ $m['value'] }}" {{ request('month') == $m['value'] ? 'selected' : '' }}>{{ $m['label'] }}</option>@endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
-                        <select name="travel_class" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+                        <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kelas</label>
+                        <select name="travel_class" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111]">
                             <option value="">Semua</option>
                             <option value="economy">Ekonomi</option>
                             <option value="premium">Premium</option>
@@ -71,58 +66,56 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">Agency</label>
-                        <select name="agency_id" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50">
+                        <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Agency</label>
+                        <select name="agency_id" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111]">
                             <option value="">Semua</option>
-                            @foreach($agencies as $a)
-                            <option value="{{ $a->id }}">{{ $a->agency_name }}</option>
-                            @endforeach
+                            @foreach($agencies as $a)<option value="{{ $a->id }}">{{ $a->agency_name }}</option>@endforeach
                         </select>
                     </div>
-                    <button type="submit" class="w-full bg-primary-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">Terapkan</button>
+                    <button type="submit" class="w-full btn-gomad-primary py-2.5 text-sm mt-2 rounded-[12px]">Terapkan</button>
                 </form>
             </div>
         </div>
 
         {{-- Results --}}
         <div class="lg:col-span-3">
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-sm text-gray-600"><strong>{{ $schedules->total() }}</strong> jadwal</p>
-                <div class="flex bg-gray-100 rounded-lg p-1">
-                    <a href="{{ request()->fullUrlWithQuery(['view' => 'grid']) }}" class="px-3 py-1.5 rounded-md text-sm {{ $viewMode == 'grid' ? 'bg-white shadow text-primary-600' : 'text-gray-500' }}">Grid</a>
-                    <a href="{{ request()->fullUrlWithQuery(['view' => 'list']) }}" class="px-3 py-1.5 rounded-md text-sm {{ $viewMode == 'list' ? 'bg-white shadow text-primary-600' : 'text-gray-500' }}">List</a>
+            <div class="flex justify-between items-center mb-6 border-b border-[#E5E5E5] pb-3">
+                <p class="text-sm text-gray-500 font-light"><strong class="text-[#111111]">{{ $schedules->total() }}</strong> jadwal</p>
+                <div class="flex bg-[#F5F5F5] rounded-lg p-1">
+                    <a href="{{ request()->fullUrlWithQuery(['view' => 'grid']) }}" class="px-3 py-1.5 rounded-md text-sm {{ $viewMode == 'grid' ? 'bg-white shadow text-[#C1121F] font-medium' : 'text-gray-500' }}">Grid</a>
+                    <a href="{{ request()->fullUrlWithQuery(['view' => 'list']) }}" class="px-3 py-1.5 rounded-md text-sm {{ $viewMode == 'list' ? 'bg-white shadow text-[#C1121F] font-medium' : 'text-gray-500' }}">List</a>
                 </div>
             </div>
 
             @if($schedules->isEmpty())
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center text-gray-500">Tidak ada jadwal.</div>
+            <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-12 text-center shadow-sm text-gray-500 font-light">Tidak ada jadwal.</div>
             @else
                 @if($viewMode == 'grid')
                 <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
                     @foreach($schedules as $s)
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
+                    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm hover:border-[#C1121F] transition-colors">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center overflow-hidden flex-shrink-0">
-                                @if($s->agency->logo)<img src="{{  $s->agency->logo }}" class="w-full h-full object-cover">@else🏢@endif
+                            <div class="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center overflow-hidden flex-shrink-0 border border-[#E5E5E5]">
+                                @if($s->agency->logo)<img src="{{ $s->agency->logo }}" class="w-full h-full object-cover">@else🏢@endif
                             </div>
                             <div>
-                                <p class="font-semibold text-sm">{{ $s->agency->agency_name }}</p>
-                                <p class="text-xs text-yellow-500">⭐ {{ number_format($s->agency->rating,1) }}</p>
+                                <p class="font-semibold text-sm text-[#111111]">{{ $s->agency->agency_name }}</p>
+                                <p class="text-xs text-gray-400 font-mono">⭐ {{ number_format($s->agency->rating,1) }}</p>
                             </div>
                         </div>
-                        <p class="text-sm font-medium mb-1">{{ $s->route->route_name }}</p>
-                        <p class="text-xs text-gray-500 mb-3">{{ $s->route->origin_city }} → {{ $s->route->destination_city }}</p>
-                        <div class="bg-gray-50 rounded-xl p-3 mb-3">
-                            <div class="flex justify-between text-sm"><span>{{ $s->departure_date->format('d M Y') }}</span><span>{{ $s->departure_time }}</span></div>
-                            <div class="flex justify-between text-xs text-gray-500 mt-1"><span>{{ $s->vehicle->plate_number ?? '-' }}</span><span class="capitalize">{{ $s->travel_class }}</span></div>
+                        <p class="text-sm font-medium text-[#111111] mb-1">{{ $s->route->route_name }}</p>
+                        <p class="text-xs text-gray-500 font-light mb-3">{{ $s->route->origin_city }} → {{ $s->route->destination_city }}</p>
+                        <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3 mb-3">
+                            <div class="flex justify-between text-sm"><span class="text-[#111111] font-mono">{{ $s->departure_date->format('d M Y') }}</span><span class="font-mono">{{ $s->departure_time }}</span></div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1 font-mono uppercase tracking-wider"><span>{{ $s->vehicle->plate_number ?? '-' }}</span><span class="text-[#C1121F]">{{ $s->travel_class }}</span></div>
                         </div>
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center border-t border-[#E5E5E5] pt-3">
                             <div>
-                                <p class="font-bold text-primary-600">Rp {{ number_format($s->price_per_seat,0,',','.') }}</p>
-                                <p class="text-xs {{ $s->available_seats > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $s->available_seats > 0 ? $s->available_seats.' kursi' : 'Penuh' }}</p>
+                                <p class="font-bold text-[#C1121F] font-mono">Rp {{ number_format($s->price_per_seat,0,',','.') }}</p>
+                                <p class="text-xs {{ $s->available_seats > 0 ? 'text-green-600' : 'text-[#C1121F]' }} font-mono uppercase tracking-wider">{{ $s->available_seats > 0 ? $s->available_seats.' kursi' : 'Penuh' }}</p>
                             </div>
                             @if($s->available_seats > 0)
-                            <a href="{{ route('customer.booking.create', $s) }}" class="bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">Booking</a>
+                            <a href="{{ route('customer.booking.create', $s) }}" class="btn-gomad-primary text-sm py-2 px-4 rounded-[12px]">Booking</a>
                             @endif
                         </div>
                     </div>
@@ -131,24 +124,24 @@
                 @else
                 <div class="space-y-3">
                     @foreach($schedules as $s)
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 shadow-sm hover:border-[#C1121F] transition-colors">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center overflow-hidden flex-shrink-0">
-                                @if($s->agency->logo)<img src="{{  $s->agency->logo }}" class="w-full h-full object-cover">@else🏢@endif
+                            <div class="w-12 h-12 rounded-full bg-[#F5F5F5] flex items-center justify-center overflow-hidden flex-shrink-0 border border-[#E5E5E5]">
+                                @if($s->agency->logo)<img src="{{ $s->agency->logo }}" class="w-full h-full object-cover">@else🏢@endif
                             </div>
                             <div>
-                                <p class="font-bold">{{ $s->agency->agency_name }}</p>
-                                <p class="text-sm text-gray-600">{{ $s->route->route_name }}</p>
-                                <p class="text-xs text-gray-500">{{ $s->departure_date->format('d M Y') }} {{ $s->departure_time }} | {{ $s->vehicle->plate_number }}</p>
+                                <p class="font-bold text-[#111111]">{{ $s->agency->agency_name }}</p>
+                                <p class="text-sm text-gray-500 font-light">{{ $s->route->route_name }}</p>
+                                <p class="text-xs text-gray-400 font-mono">{{ $s->departure_date->format('d M Y') }} {{ $s->departure_time }} | {{ $s->vehicle->plate_number }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="text-right">
-                                <p class="font-bold text-primary-600 text-lg">Rp {{ number_format($s->price_per_seat,0,',','.') }}</p>
-                                <p class="text-xs {{ $s->available_seats > 0 ? 'text-green-600' : 'text-red-600' }}">{{ $s->available_seats }} kursi</p>
+                                <p class="font-bold text-[#C1121F] font-mono text-lg">Rp {{ number_format($s->price_per_seat,0,',','.') }}</p>
+                                <p class="text-xs {{ $s->available_seats > 0 ? 'text-green-600' : 'text-[#C1121F]' }} font-mono uppercase tracking-wider">{{ $s->available_seats }} kursi</p>
                             </div>
                             @if($s->available_seats > 0)
-                            <a href="{{ route('customer.booking.create', $s) }}" class="bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-primary-700">Booking</a>
+                            <a href="{{ route('customer.booking.create', $s) }}" class="btn-gomad-primary text-sm py-2 px-4 rounded-[12px]">Booking</a>
                             @endif
                         </div>
                     </div>

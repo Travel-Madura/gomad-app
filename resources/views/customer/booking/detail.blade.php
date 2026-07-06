@@ -6,12 +6,11 @@
     @if(isset($booking))
     
     {{-- Status Banner --}}
-    {{-- Status Banner --}}
-    <div class="rounded-2xl p-4 mb-6 text-center
-        @if(in_array($booking->status, ['paid', 'on_going', 'completed'])) bg-green-50 border border-green-200
-        @elseif(in_array($booking->status, ['pending', 'confirmed'])) bg-yellow-50 border border-yellow-200
-        @elseif($booking->status == 'cancelled') bg-red-50 border border-red-200
-        @else bg-gray-50 border border-gray-200 @endif">
+    <div class="rounded-[12px] p-4 mb-6 text-center border
+        @if(in_array($booking->status, ['paid', 'on_going', 'completed'])) bg-green-50 border-green-200
+        @elseif(in_array($booking->status, ['pending', 'confirmed'])) bg-yellow-50 border-yellow-200
+        @elseif($booking->status == 'cancelled') bg-red-50 border-red-200
+        @else bg-[#F5F5F5] border-[#E5E5E5] @endif">
         <div class="text-4xl mb-2">
             @if(in_array($booking->status, ['paid', 'on_going', 'completed'])) ✅
             @elseif(in_array($booking->status, ['pending', 'confirmed'])) ⏳
@@ -19,14 +18,14 @@
             @else 🚗
             @endif
         </div>
-        <h2 class="text-xl font-bold">
+        <h2 class="text-xl font-bold text-[#111111]">
             @if($booking->status == 'confirmed' && $booking->payment && $booking->payment->payment_type == 'cod')
                 Menunggu Pembayaran COD
             @else
                 {{ $booking->status_label }}
             @endif
         </h2>
-        <p class="text-sm mt-1">
+        <p class="text-sm mt-1 font-light text-gray-600">
             @if($booking->status == 'pending' && !$booking->payment && !$booking->cashPayment)
                 Pilih metode pembayaran dan promo di bawah ini.
             @elseif($booking->status == 'confirmed' && $booking->payment && $booking->payment->payment_type == 'cod')
@@ -42,60 +41,60 @@
     </div>
 
     {{-- Booking Card --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h1 class="text-2xl font-bold">{{ $booking->booking_code }}</h1>
-                <p class="text-gray-500">{{ $booking->schedule->agency->agency_name ?? '-' }}</p>
+                <h1 class="text-2xl font-bold font-mono text-[#111111]">{{ $booking->booking_code }}</h1>
+                <p class="text-gray-500 font-light">{{ $booking->schedule->agency->agency_name ?? '-' }}</p>
             </div>
-            <p class="text-2xl font-bold text-primary-600">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</p>
+            <p class="text-2xl font-bold text-[#C1121F] font-mono">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</p>
         </div>
 
         {{-- Detail Pesanan --}}
-        <div class="border-t pt-4">
-            <h3 class="font-bold text-secondary mb-3">Detail Pesanan</h3>
+        <div class="border-t border-[#E5E5E5] pt-4">
+            <h3 class="font-mono uppercase tracking-wider text-xs font-bold text-[#111111] mb-3">Detail Pesanan</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <div class="bg-gray-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">Rute</span>
-                    <p class="font-semibold">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Rute</span>
+                    <p class="font-semibold text-[#111111]">{{ $booking->originStop->city_name ?? '?' }} → {{ $booking->destinationStop->city_name ?? '?' }}</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">Jadwal</span>
-                    <p class="font-semibold">{{ $booking->schedule->departure_date->format('d M Y') }} {{ $booking->schedule->departure_time }}</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Jadwal</span>
+                    <p class="font-semibold text-[#111111]">{{ $booking->schedule->departure_date->format('d M Y') }} {{ $booking->schedule->departure_time }}</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">Kendaraan</span>
-                    <p class="font-semibold">{{ $booking->schedule->vehicle->plate_number ?? '-' }} ({{ $booking->schedule->vehicle->brand ?? '' }} {{ $booking->schedule->vehicle->model ?? '' }})</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Kendaraan</span>
+                    <p class="font-semibold text-[#111111]">{{ $booking->schedule->vehicle->plate_number ?? '-' }}</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">Jumlah Penumpang</span>
-                    <p class="font-semibold">{{ $booking->total_passengers }} orang</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">Penumpang</span>
+                    <p class="font-semibold text-[#111111]">{{ $booking->total_passengers }} orang</p>
                 </div>
             </div>
 
             {{-- Alamat --}}
             <div class="grid grid-cols-2 gap-3 mt-3 text-sm">
-                <div class="bg-blue-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">📍 Jemput</span>
-                    <p class="font-medium text-xs">{{ $booking->pickup_address }}</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">📍 Jemput</span>
+                    <p class="font-medium text-xs text-[#111111]">{{ $booking->pickup_address }}</p>
                 </div>
-                <div class="bg-red-50 rounded-xl p-3">
-                    <span class="text-xs text-gray-500">🎯 Tujuan</span>
-                    <p class="font-medium text-xs">{{ $booking->destination_address }}</p>
+                <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-3">
+                    <span class="text-[10px] font-mono uppercase tracking-wider text-gray-400">🎯 Tujuan</span>
+                    <p class="font-medium text-xs text-[#111111]">{{ $booking->destination_address }}</p>
                 </div>
             </div>
 
             {{-- List Penumpang --}}
             <div class="mt-4">
-                <h4 class="font-semibold text-sm mb-2">Daftar Penumpang</h4>
+                <h4 class="font-mono uppercase tracking-wider text-xs font-semibold text-[#111111] mb-2">Daftar Penumpang</h4>
                 <div class="space-y-1">
                     @forelse($booking->passengers as $p)
-                    <div class="flex justify-between text-sm py-1.5 px-3 bg-gray-50 rounded-lg">
-                        <span>{{ $p->passenger_name }} <span class="text-gray-400 text-xs">Seat {{ $p->seat_number }}</span></span>
-                        <span class="text-gray-500 text-xs">{{ $p->passenger_phone }}</span>
+                    <div class="flex justify-between text-sm py-1.5 px-3 bg-[#F5F5F5] border border-[#E5E5E5] rounded-lg">
+                        <span class="text-[#111111]">{{ $p->passenger_name }} <span class="text-gray-400 text-xs font-mono">Seat {{ $p->seat_number }}</span></span>
+                        <span class="text-gray-500 text-xs font-light">{{ $p->passenger_phone }}</span>
                     </div>
                     @empty
-                    <p class="text-gray-400 text-sm">-</p>
+                    <p class="text-gray-400 text-sm font-light">-</p>
                     @endforelse
                 </div>
             </div>
@@ -107,17 +106,15 @@
     {{-- =========================================================== --}}
     @if($booking->status == 'pending' && !$booking->payment && !$booking->cashPayment)
     
-        {{-- Pilih Metode Pembayaran (DROPDOWN) --}}
         {{-- Pilih Metode Pembayaran --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
-            <h2 class="text-lg font-bold text-secondary mb-3">Metode Pembayaran</h2>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-4 shadow-sm">
+            <h2 class="text-lg font-bold text-[#111111] mb-3">Metode Pembayaran</h2>
             
             @php
-                // Ambil payment methods dari route
                 $routePaymentMethods = $booking->schedule->route->payment_methods_array;
             @endphp
             
-            <select id="paymentMethod" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-600 bg-gray-50 text-sm" onchange="updatePaymentInfo()">
+            <select id="paymentMethod" class="w-full px-4 py-3 border border-[#E5E5E5] rounded-[12px] focus:border-[#C1121F] outline-none bg-[#F5F5F5] text-sm transition-colors" onchange="updatePaymentInfo()">
                 <option value="">-- Pilih Metode Pembayaran --</option>
                 
                 @if(in_array('midtrans', $routePaymentMethods))
@@ -134,23 +131,23 @@
             </select>
             
             @if(count($routePaymentMethods) < 3)
-            <div class="mt-2 bg-blue-50 rounded-lg p-2 text-xs text-blue-700">
+            <div class="mt-2 bg-[#F5F5F5] border border-blue-200 rounded-lg p-2 text-xs text-blue-700 font-light">
                 ℹ️ Beberapa metode pembayaran tidak tersedia untuk rute ini.
             </div>
             @endif
             
-            <div id="paymentInfo" class="mt-3 text-sm text-gray-600 hidden"></div>
+            <div id="paymentInfo" class="mt-3 text-sm text-gray-600 hidden font-light"></div>
         </div>
 
-        {{-- Pilih Promo (DROPDOWN dengan filter metode pembayaran) --}}
+        {{-- Pilih Promo --}}
         @php
             $promoService = app(\App\Services\PromoService::class);
             $availablePromos = $promoService->getAvailablePromosForCustomer(auth()->user(), $booking->schedule_id);
         @endphp
         @if($availablePromos->isNotEmpty())
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
-            <h2 class="text-lg font-bold text-secondary mb-3">Promo Tersedia</h2>
-            <select id="promoSelect" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 bg-gray-50 text-sm" onchange="updatePromoInfo()">
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-4 shadow-sm">
+            <h2 class="text-lg font-bold text-[#111111] mb-3">Promo Tersedia</h2>
+            <select id="promoSelect" class="w-full px-4 py-3 border border-[#E5E5E5] rounded-[12px] focus:border-[#C1121F] outline-none bg-[#F5F5F5] text-sm transition-colors" onchange="updatePromoInfo()">
                 <option value="">-- Tanpa Promo --</option>
                 @foreach($availablePromos as $promo)
                 @php
@@ -171,47 +168,47 @@
                 </option>
                 @endforeach
             </select>
-            <div id="promoInfo" class="mt-3 text-sm text-purple-700 hidden"></div>
-            <div id="promoWarning" class="mt-2 text-sm text-red-600 hidden"></div>
+            <div id="promoInfo" class="mt-3 text-sm text-[#C1121F] hidden font-medium"></div>
+            <div id="promoWarning" class="mt-2 text-sm text-red-600 hidden font-light"></div>
         </div>
         @endif
 
         {{-- Detail Kalkulasi Harga --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-            <h2 class="text-lg font-bold text-secondary mb-4">Rincian Pembayaran</h2>
+        <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
+            <h2 class="text-lg font-bold text-[#111111] mb-4">Rincian Pembayaran</h2>
             <div class="space-y-2 text-sm">
                 @php
                     $basePrice = $booking->base_price ?? ($booking->total_price - ($booking->service_fee ?? 0) - ($booking->platform_fee ?? 0) + ($booking->discount_amount ?? 0));
                     $pricePerPerson = $booking->total_passengers > 0 ? $basePrice / $booking->total_passengers : 0;
                 @endphp
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Harga Tiket ({{ $booking->total_passengers }} × Rp {{ number_format($pricePerPerson, 0, ',', '.') }})</span>
-                    <span class="font-medium">Rp {{ number_format($basePrice, 0, ',', '.') }}</span>
+                    <span class="text-gray-500 font-light">Harga Tiket ({{ $booking->total_passengers }} × Rp {{ number_format($pricePerPerson, 0, ',', '.') }})</span>
+                    <span class="font-medium text-[#111111]">Rp {{ number_format($basePrice, 0, ',', '.') }}</span>
                 </div>
                 
                 @if(($booking->service_fee ?? 0) > 0)
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Biaya Layanan</span>
-                    <span class="font-medium">Rp {{ number_format($booking->service_fee, 0, ',', '.') }}</span>
+                    <span class="text-gray-500 font-light">Biaya Layanan</span>
+                    <span class="font-medium text-[#111111]">Rp {{ number_format($booking->service_fee, 0, ',', '.') }}</span>
                 </div>
                 @endif
                 
                 @if(($booking->platform_fee ?? 0) > 0)
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Biaya Platform</span>
-                    <span class="font-medium">Rp {{ number_format($booking->platform_fee, 0, ',', '.') }}</span>
+                    <span class="text-gray-500 font-light">Biaya Platform</span>
+                    <span class="font-medium text-[#111111]">Rp {{ number_format($booking->platform_fee, 0, ',', '.') }}</span>
                 </div>
                 @endif
                 
-                <div id="discountRow" class="flex justify-between text-green-600 hidden">
+                <div id="discountRow" class="flex justify-between text-[#C1121F] hidden">
                     <span>Diskon Promo</span>
                     <span class="font-bold" id="discountAmount">-Rp 0</span>
                 </div>
                 
-                <hr class="border-gray-200">
+                <hr class="border-[#E5E5E5]">
                 <div class="flex justify-between text-base font-bold">
                     <span>Total</span>
-                    <span class="text-primary-600" id="finalTotal">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
+                    <span class="text-[#C1121F] font-mono" id="finalTotal">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -222,7 +219,7 @@
             <input type="hidden" name="payment_method" id="fPaymentMethod">
             <input type="hidden" name="promo_id" id="fPromoId">
             <button type="submit" id="btnPay" disabled
-                    class="w-full bg-gray-300 text-gray-500 py-4 rounded-xl font-bold text-lg cursor-not-allowed transition">
+                    class="w-full bg-[#E5E5E5] text-gray-500 py-4 rounded-[12px] font-bold text-lg cursor-not-allowed transition">
                 💳 BAYAR SEKARANG
             </button>
         </form>
@@ -233,19 +230,19 @@
     {{-- MIDTRANS: Tombol Snap --}}
     {{-- =========================================================== --}}
     @if($booking->payment && $booking->payment->payment_type == 'midtrans' && $booking->payment->status == 'pending')
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 class="text-lg font-bold text-secondary mb-4">Pembayaran Online</h2>
-        <div class="bg-blue-50 rounded-xl p-4 mb-4 text-sm text-blue-800">
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
+        <h2 class="text-lg font-bold text-[#111111] mb-4">Pembayaran Online</h2>
+        <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-4 mb-4 text-sm text-[#111111]">
             <p>💳 <strong>Midtrans</strong> - Transfer Bank, Virtual Account, QRIS, E-Wallet</p>
         </div>
         @if(isset($snapToken))
-        <button id="pay-button" class="w-full bg-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition">
+        <button id="pay-button" class="w-full bg-[#C1121F] text-white py-4 rounded-[12px] font-bold text-lg hover:bg-[#8A0F18] transition">
             💳 BAYAR SEKARANG (MIDTRANS)
         </button>
         @else
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center text-sm text-yellow-800">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-[12px] p-4 text-center text-sm text-yellow-800 font-light">
             Menghubungkan ke gateway pembayaran...
-            <a href="{{ route('customer.booking.show', $booking) }}" class="text-primary-600 underline font-medium ml-2">Muat Ulang Halaman</a>
+            <a href="{{ route('customer.booking.show', $booking) }}" class="text-[#C1121F] underline font-medium ml-2">Muat Ulang Halaman</a>
         </div>
         @endif
     </div>
@@ -255,25 +252,25 @@
     {{-- CASH: Kode Bayar + Peta Warung --}}
     {{-- =========================================================== --}}
     @if($booking->cashPayment && $booking->cashPayment->status == 'pending')
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 class="text-lg font-bold text-secondary mb-4">Pembayaran di Warung GoMad</h2>
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
+        <h2 class="text-lg font-bold text-[#111111] mb-4">Pembayaran di Warung GoMad</h2>
         
-        <div class="bg-green-50 border-2 border-green-300 rounded-2xl p-6 text-center mb-6">
-            <p class="text-sm text-green-700 mb-2">Tunjukkan kode ini ke Warung GoMad terdekat</p>
-            <p class="text-4xl font-mono font-bold text-primary-600 tracking-widest mb-2">{{ $booking->cashPayment->payment_code }}</p>
-            <p class="text-xs text-gray-500">Expired: {{ $booking->cashPayment->expired_at ? $booking->cashPayment->expired_at->format('d M Y H:i') : '-' }}</p>
-            <button onclick="copyPaymentCode()" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition">
+        <div class="bg-green-50 border-2 border-green-300 rounded-[12px] p-6 text-center mb-6">
+            <p class="text-sm text-green-700 font-mono uppercase tracking-wider mb-2">Tunjukkan kode ini ke Warung GoMad terdekat</p>
+            <p class="text-4xl font-mono font-bold text-[#C1121F] tracking-widest mb-2">{{ $booking->cashPayment->payment_code }}</p>
+            <p class="text-xs text-gray-500 font-light">Expired: {{ $booking->cashPayment->expired_at ? $booking->cashPayment->expired_at->format('d M Y H:i') : '-' }}</p>
+            <button onclick="copyPaymentCode()" class="mt-3 bg-[#C1121F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8A0F18] transition">
                 📋 Salin Kode
             </button>
         </div>
 
         <div>
-            <h3 class="font-bold text-secondary mb-3">Warung GoMad Terdekat</h3>
-            <p class="text-sm text-gray-500 mb-4">Kunjungi salah satu Warung GoMad di bawah ini untuk melakukan pembayaran</p>
-            <div id="warungMap" style="height: 350px; z-index: 1;" class="rounded-xl border border-gray-200 mb-3 w-full"></div>
-            <div id="warungInfo" class="text-center mb-3"></div>
+            <h3 class="font-mono uppercase tracking-wider text-xs font-bold text-[#111111] mb-3">Warung GoMad Terdekat</h3>
+            <p class="text-sm text-gray-500 font-light mb-4">Kunjungi salah satu Warung GoMad di bawah ini untuk melakukan pembayaran</p>
+            <div id="warungMap" style="height: 350px; z-index: 1;" class="rounded-[12px] border border-[#E5E5E5] mb-3 w-full"></div>
+            <div id="warungInfo" class="text-center mb-3 font-light text-sm text-gray-500"></div>
             <div id="warungList" class="space-y-3">
-                <p class="text-sm text-gray-500 text-center">⏳ Memuat data warung...</p>
+                <p class="text-sm text-gray-500 text-center font-light">⏳ Memuat data warung...</p>
             </div>
         </div>
     </div>
@@ -282,35 +279,33 @@
     {{-- =========================================================== --}}
     {{-- COD: Info Pembayaran ke Sopir --}}
     {{-- =========================================================== --}}
-    {{-- COD: Info Pembayaran ke Sopir --}}
     @if($booking->payment && $booking->payment->payment_type == 'cod')
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 class="text-lg font-bold text-secondary mb-4">Pembayaran ke Sopir (COD)</h2>
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-6 mb-6 shadow-sm">
+        <h2 class="text-lg font-bold text-[#111111] mb-4">Pembayaran ke Sopir (COD)</h2>
         
         @if($booking->payment->status == 'cod_pending')
-        <div class="bg-orange-50 border-2 border-orange-300 rounded-2xl p-6 text-center">
+        <div class="bg-orange-50 border-2 border-orange-300 rounded-[12px] p-6 text-center">
             <div class="text-4xl mb-3">🚗</div>
             <p class="font-bold text-orange-800 text-lg mb-2">Bayar ke Sopir saat Penjemputan</p>
-            <p class="text-sm text-orange-700 mb-4">
+            <p class="text-sm text-orange-700 mb-4 font-light">
                 Siapkan uang tunai sejumlah <strong>Rp {{ number_format($booking->total_price, 0, ',', '.') }}</strong> 
                 dan bayarkan langsung ke sopir saat Anda dijemput.
             </p>
-            <div class="bg-white rounded-xl p-4 text-left text-sm space-y-2">
-                <p><strong>Nama Sopir:</strong> {{ $booking->schedule->driver->name ?? 'Akan ditentukan' }}</p>
-                <p><strong>Kendaraan:</strong> {{ $booking->schedule->vehicle->plate_number ?? '-' }} ({{ $booking->schedule->vehicle->brand ?? '' }} {{ $booking->schedule->vehicle->model ?? '' }})</p>
-                <p><strong>Jemput:</strong> {{ $booking->schedule->departure_date->format('d M Y') }} {{ $booking->schedule->departure_time }}</p>
-                <p><strong>Alamat:</strong> {{ $booking->pickup_address }}</p>
+            <div class="bg-white rounded-[12px] p-4 text-left text-sm space-y-2 border border-orange-200">
+                <p><strong class="font-mono uppercase tracking-wider text-xs">Nama Sopir:</strong> {{ $booking->schedule->driver->name ?? 'Akan ditentukan' }}</p>
+                <p><strong class="font-mono uppercase tracking-wider text-xs">Kendaraan:</strong> {{ $booking->schedule->vehicle->plate_number ?? '-' }}</p>
+                <p><strong class="font-mono uppercase tracking-wider text-xs">Jemput:</strong> {{ $booking->schedule->departure_date->format('d M Y') }} {{ $booking->schedule->departure_time }}</p>
+                <p><strong class="font-mono uppercase tracking-wider text-xs">Alamat:</strong> {{ $booking->pickup_address }}</p>
             </div>
-            {{-- ⚠️ Peringatan: E-Ticket belum tersedia --}}
-            <div class="mt-4 bg-yellow-100 border border-yellow-300 rounded-xl p-3 text-sm text-yellow-800">
+            <div class="mt-4 bg-yellow-100 border border-yellow-300 rounded-[12px] p-3 text-sm text-yellow-800 font-light">
                 ⚠️ E-Ticket akan tersedia setelah sopir mengkonfirmasi pembayaran.
             </div>
         </div>
         @elseif($booking->payment->status == 'cod_confirmed')
-        <div class="bg-green-50 border-2 border-green-300 rounded-2xl p-6 text-center">
+        <div class="bg-green-50 border-2 border-green-300 rounded-[12px] p-6 text-center">
             <div class="text-4xl mb-3">✅</div>
             <p class="font-bold text-green-800 text-lg mb-2">Pembayaran COD Dikonfirmasi</p>
-            <p class="text-sm text-green-700">Pembayaran telah diterima oleh sopir. Booking Anda sudah aktif.</p>
+            <p class="text-sm text-green-700 font-light">Pembayaran telah diterima oleh sopir. Booking Anda sudah aktif.</p>
         </div>
         @endif
     </div>
@@ -320,9 +315,9 @@
     {{-- PAYMENT SUCCESS --}}
     {{-- =========================================================== --}}
     @if($booking->payment && in_array($booking->payment->status, ['paid', 'cod_confirmed']))
-    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-center">
+    <div class="bg-green-50 border border-green-200 rounded-[12px] p-4 mb-6 text-center">
         <p class="font-bold text-green-800">✅ Pembayaran Berhasil</p>
-        <p class="text-sm text-green-600">
+        <p class="text-sm text-green-600 font-light">
             Metode: 
             @if($booking->payment->payment_type == 'midtrans') Online (Midtrans)
             @elseif($booking->payment->payment_type == 'cash') Warung GoMad
@@ -334,8 +329,8 @@
 
     {{-- Promo Used Info --}}
     @if(($booking->discount_amount ?? 0) > 0)
-    <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-6 text-sm">
-        <span class="text-purple-800">🎫 Diskon Rp {{ number_format($booking->discount_amount, 0, ',', '.') }} telah diterapkan</span>
+    <div class="bg-purple-50 border border-purple-200 rounded-[12px] p-3 mb-6 text-sm">
+        <span class="text-purple-800 font-medium">🎫 Diskon Rp {{ number_format($booking->discount_amount, 0, ',', '.') }} telah diterapkan</span>
     </div>
     @endif
 
@@ -345,7 +340,7 @@
     <div class="space-y-3">
         @if(in_array($booking->status, ['paid', 'on_going', 'completed']))
         <a href="{{ route('customer.booking.e-ticket', $booking) }}" 
-           class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition">
+           class="block w-full text-center bg-[#C1121F] text-white py-3 rounded-[12px] font-bold text-lg hover:bg-[#8A0F18] transition">
             🎫 Lihat E-Ticket
         </a>
         @endif
@@ -356,7 +351,6 @@
             $cancellationFee = $booking->cancellation_fee ?? 0;
             $cancellationRefund = $booking->cancellation_refund ?? 0;
             
-            // Hitung jam sampai keberangkatan
             if ($booking->schedule) {
                 $departureDateTime = \Carbon\Carbon::parse(
                     $booking->schedule->departure_date->format('Y-m-d') . ' ' . $booking->schedule->departure_time
@@ -369,10 +363,9 @@
 
         @if($canCancel)
             @if($booking->status === 'paid')
-            {{-- Info biaya pembatalan untuk booking paid --}}
-            <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
-                <h4 class="font-semibold text-red-800 text-sm mb-2">⚠️ Kebijakan Pembatalan</h4>
-                <div class="text-sm text-red-700 space-y-1">
+            <div class="bg-red-50 border border-red-200 rounded-[12px] p-4 mb-3">
+                <h4 class="font-mono uppercase tracking-wider text-xs font-semibold text-red-800 mb-2">⚠️ Kebijakan Pembatalan</h4>
+                <div class="text-sm text-red-700 space-y-1 font-light">
                     <p>• Biaya pembatalan: <strong>Rp {{ number_format($cancellationFee, 0, ',', '.') }}</strong> (25% dari total)</p>
                     <p>• Dana dikembalikan: <strong>Rp {{ number_format($cancellationRefund, 0, ',', '.') }}</strong></p>
                     @if($hoursUntilDeparture > 24 && $hoursUntilDeparture < 48)
@@ -384,7 +377,7 @@
 
             <form action="{{ route('customer.booking.cancel', $booking) }}" method="POST" onsubmit="return confirmCancel()">
                 @csrf
-                <button type="submit" class="w-full border border-red-500 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition">
+                <button type="submit" class="w-full border border-red-500 text-red-600 py-3 rounded-[12px] font-semibold hover:bg-red-50 transition">
                     @if($booking->status === 'paid')
                         ❌ Batalkan Booking (Biaya Rp {{ number_format($cancellationFee, 0, ',', '.') }})
                     @else
@@ -393,12 +386,11 @@
                 </button>
             </form>
         @elseif($booking->status === 'paid' && $hoursUntilDeparture <= 24)
-            {{-- Tidak bisa cancel karena sudah H-24 --}}
-            <div class="bg-gray-100 border border-gray-300 rounded-xl p-4 text-center">
+            <div class="bg-[#F5F5F5] border border-[#E5E5E5] rounded-[12px] p-4 text-center">
                 <p class="text-gray-600 text-sm font-medium">🔒 Pembatalan tidak tersedia</p>
-                <p class="text-gray-500 text-xs mt-1">Kurang dari 24 jam sebelum keberangkatan. Hubungi agency untuk bantuan.</p>
+                <p class="text-gray-500 text-xs mt-1 font-light">Kurang dari 24 jam sebelum keberangkatan. Hubungi agency untuk bantuan.</p>
                 @if($booking->schedule && $booking->schedule->agency)
-                <p class="text-gray-500 text-xs mt-1">
+                <p class="text-gray-500 text-xs mt-1 font-light">
                     📞 {{ $booking->schedule->agency->contact_alternate ?? $booking->schedule->agency->user->phone ?? '-' }}
                 </p>
                 @endif
@@ -406,7 +398,7 @@
         @endif
 
         <a href="{{ route('customer.bookings') }}" 
-           class="block w-full text-center border border-gray-300 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+           class="block w-full text-center border border-[#E5E5E5] text-gray-700 py-3 rounded-[12px] font-semibold hover:bg-[#F5F5F5] transition">
             ← Kembali ke Booking Saya
         </a>
     </div>
@@ -453,7 +445,7 @@ function updatePaymentInfo() {
     if (method) {
         fMethod.value = method;
         btn.disabled = false;
-        btn.className = 'w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-700 cursor-pointer transition';
+        btn.className = 'w-full bg-[#C1121F] text-white py-4 rounded-[12px] font-bold text-lg hover:bg-[#8A0F18] cursor-pointer transition';
         
         if (method === 'midtrans') {
             info.innerHTML = '💳 <strong>Bayar Online</strong> - Transfer Bank, Virtual Account, QRIS, E-Wallet via Midtrans.';
@@ -470,11 +462,10 @@ function updatePaymentInfo() {
         fMethod.value = '';
         btn.disabled = true;
         btn.textContent = '💳 BAYAR SEKARANG';
-        btn.className = 'w-full bg-gray-300 text-gray-500 py-4 rounded-xl font-bold text-lg cursor-not-allowed transition';
+        btn.className = 'w-full bg-[#E5E5E5] text-gray-500 py-4 rounded-[12px] font-bold text-lg cursor-not-allowed transition';
         info.classList.add('hidden');
     }
     
-    // Re-check promo setelah metode berubah
     updatePromoInfo();
 }
 
@@ -494,7 +485,6 @@ function updatePromoInfo() {
     warning.classList.add('hidden');
     
     if (option.value) {
-        // Cek apakah promo berlaku untuk metode pembayaran yang dipilih
         var promoMethods = option.getAttribute('data-methods') || '';
         if (paymentMethod && promoMethods && !promoMethods.includes(paymentMethod)) {
             warning.innerHTML = '⚠️ Promo ini tidak berlaku untuk metode pembayaran yang dipilih. Silakan ganti metode pembayaran atau pilih promo lain.';
@@ -567,16 +557,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var pickupLng = {{ $booking->pickup_longitude ?? 113.8586 }};
     var radius = 50; // km
 
-    // Marker lokasi customer
     var customerIcon = L.divIcon({
-        html: '<div style="background:#DC2626;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">📍</div>',
+        html: '<div style="background:#C1121F;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">📍</div>',
         className: '', iconSize: [30, 30], iconAnchor: [15, 15],
     });
     L.marker([pickupLat, pickupLng], { icon: customerIcon })
         .addTo(map)
         .bindPopup('<strong>Lokasi Penjemputan</strong>');
 
-    // Fungsi untuk render warung
     function renderWarungs(warungs, showAll) {
         var warungList = document.getElementById('warungList');
         
@@ -586,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="text-4xl mb-3">🏪</div>
                     <p class="text-gray-600 font-medium mb-2">Tidak ada Warung GoMad terdekat</p>
                     <p class="text-sm text-gray-500 mb-4">Tidak ditemukan warung dalam radius ${radius} km dari lokasi penjemputan</p>
-                    <button onclick="loadAllWarungs()" class="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-primary-700 transition">
+                    <button onclick="loadAllWarungs()" class="bg-[#C1121F] text-white px-6 py-3 rounded-[12px] text-sm font-semibold hover:bg-[#8A0F18] transition">
                         🔍 Lihat Semua Warung Tersedia
                     </button>
                 </div>`;
@@ -602,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var lng = parseFloat(w.longitude);
 
                 var warungIcon = L.divIcon({
-                    html: '<div style="background:#16a34a;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">🏪</div>',
+                    html: '<div style="background:#C1121F;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);">🏪</div>',
                     className: '', iconSize: [32, 32], iconAnchor: [16, 16],
                 });
 
@@ -613,8 +601,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <strong>${w.agent_name}</strong><br>
                             <span style="font-size:12px;color:#666;">${w.address || ''}</span><br>
                             <span style="font-size:12px;">📞 ${w.owner_phone || '-'}</span><br>
-                            ${w.distance_km ? '<span style="font-size:11px;color:#16a34a;">📍 ' + w.distance_km.toFixed(1) + ' km</span><br>' : ''}
-                            <a href="${w.maps_link || 'https://www.google.com/maps?q=' + lat + ',' + lng}" target="_blank" style="display:inline-block;margin-top:6px;background:#DC2626;color:white;padding:6px 12px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">🗺️ Google Maps</a>
+                            ${w.distance_km ? '<span style="font-size:11px;color:#C1121F;">📍 ' + w.distance_km.toFixed(1) + ' km</span><br>' : ''}
+                            <a href="${w.maps_link || 'https://www.google.com/maps?q=' + lat + ',' + lng}" target="_blank" style="display:inline-block;margin-top:6px;background:#C1121F;color:white;padding:6px 12px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">🗺️ Google Maps</a>
                         </div>
                     `);
 
@@ -623,19 +611,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var distanceText = w.distance_km ? w.distance_km.toFixed(1) + ' km' : '';
             listHtml += `
-                <div class="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition">
+                <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-4 hover:border-[#C1121F] transition">
                     <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-lg flex-shrink-0">🏪</div>
+                        <div class="w-10 h-10 bg-[#C1121F]/10 rounded-full flex items-center justify-center text-lg flex-shrink-0 border border-[#E5E5E5]">🏪</div>
                         <div class="flex-1">
-                            <h4 class="font-bold text-secondary text-sm">${w.agent_name}</h4>
-                            <p class="text-xs text-gray-500 mt-1">${w.address || ''}</p>
+                            <h4 class="font-bold text-[#111111] text-sm">${w.agent_name}</h4>
+                            <p class="text-xs text-gray-500 mt-1 font-light">${w.address || ''}</p>
                             <div class="flex items-center gap-3 mt-2 text-xs">
-                                <span class="text-gray-500">📞 ${w.owner_phone || '-'}</span>
-                                ${distanceText ? '<span class="text-primary-600 font-medium">📍 ' + distanceText + '</span>' : ''}
+                                <span class="text-gray-500 font-light">📞 ${w.owner_phone || '-'}</span>
+                                ${distanceText ? '<span class="text-[#C1121F] font-medium">📍 ' + distanceText + '</span>' : ''}
                             </div>
                             <div class="flex gap-2 mt-2">
-                                <button onclick="event.stopPropagation();map.setView([' + lat + ', ' + lng + '], 16)" class="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded-lg hover:bg-green-200 transition font-medium">Lihat Peta</button>
-                                <a href="${w.maps_link || 'https://www.google.com/maps?q=' + lat + ',' + lng}" target="_blank" onclick="event.stopPropagation();" class="text-xs bg-red-100 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-200 transition font-medium">🗺️ Google Maps</a>
+                                <button onclick="event.stopPropagation();map.setView([' + lat + ', ' + lng + '], 16)" class="text-xs bg-[#C1121F]/10 text-[#C1121F] px-3 py-1.5 rounded-lg hover:bg-[#C1121F]/20 transition font-medium">Lihat Peta</button>
+                                <a href="${w.maps_link || 'https://www.google.com/maps?q=' + lat + ',' + lng}" target="_blank" onclick="event.stopPropagation();" class="text-xs bg-[#C1121F] text-white px-3 py-1.5 rounded-lg hover:bg-[#8A0F18] transition font-medium">🗺️ Google Maps</a>
                             </div>
                         </div>
                     </div>
@@ -651,7 +639,6 @@ document.addEventListener('DOMContentLoaded', function() {
             map.fitBounds(bounds, { padding: [30, 30], maxZoom: 8 });
         }
 
-        // Tampilkan info jumlah warung
         var infoEl = document.getElementById('warungInfo');
         if (infoEl) {
             infoEl.innerHTML = showAll 
@@ -660,9 +647,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Load warung terdekat (default)
     function loadNearbyWarungs() {
-        document.getElementById('warungList').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">⏳ Mencari warung terdekat...</p>';
+        document.getElementById('warungList').innerHTML = '<p class="text-sm text-gray-500 text-center py-4 font-light">⏳ Mencari warung terdekat...</p>';
 
         fetch('/api/v1/nearby-warungs?latitude=' + pickupLat + '&longitude=' + pickupLng + '&radius=' + radius, {
             headers: { 'Accept': 'application/json' }
@@ -674,15 +660,14 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(function() {
             document.getElementById('warungList').innerHTML = `
                 <div class="text-center py-6">
-                    <p class="text-red-500 mb-2">⚠️ Gagal menghubungi server</p>
-                    <button onclick="loadNearbyWarungs()" class="text-primary-600 hover:underline text-sm">Coba Lagi</button>
+                    <p class="text-red-500 mb-2 font-medium">⚠️ Gagal menghubungi server</p>
+                    <button onclick="loadNearbyWarungs()" class="text-[#C1121F] hover:underline text-sm font-medium">Coba Lagi</button>
                 </div>`;
         });
     }
 
-    // Load semua warung (tanpa filter radius)
     window.loadAllWarungs = function() {
-        document.getElementById('warungList').innerHTML = '<p class="text-sm text-gray-500 text-center py-4">⏳ Memuat semua warung...</p>';
+        document.getElementById('warungList').innerHTML = '<p class="text-sm text-gray-500 text-center py-4 font-light">⏳ Memuat semua warung...</p>';
 
         fetch('/api/v1/nearby-warungs?latitude=' + pickupLat + '&longitude=' + pickupLng + '&radius=9999', {
             headers: { 'Accept': 'application/json' }
@@ -692,11 +677,10 @@ document.addEventListener('DOMContentLoaded', function() {
             renderWarungs(data.data || [], true);
         })
         .catch(function() {
-            document.getElementById('warungList').innerHTML = '<p class="text-red-500 text-center py-4">Gagal memuat data warung.</p>';
+            document.getElementById('warungList').innerHTML = '<p class="text-red-500 text-center py-4 font-medium">Gagal memuat data warung.</p>';
         });
     };
 
-    // Load awal
     loadNearbyWarungs();
 });
 </script>
@@ -705,32 +689,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {{-- Modal Ganti Pembayaran --}}
 @if($booking->status == 'pending' || ($booking->payment && $booking->payment->payment_type == 'cod' && $booking->payment->status == 'cod_pending'))
-<div id="changePaymentModal" style="display:none;" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
-        <h3 class="font-bold text-lg mb-4">Ganti Metode Pembayaran</h3>
+<div id="changePaymentModal" style="display:none;" class="fixed inset-0 bg-[#111111]/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[12px] shadow-xl p-6 max-w-sm w-full border border-[#E5E5E5]">
+        <h3 class="font-bold text-lg text-[#111111] mb-4">Ganti Metode Pembayaran</h3>
         <form action="{{ route('customer.booking.change-payment', $booking) }}" method="POST" class="space-y-3">
             @csrf
-            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-gray-50">
-                <input type="radio" name="new_method" value="midtrans" class="text-primary-600"> 💳 Bayar Online
+            <label class="flex items-center gap-3 p-3 border border-[#E5E5E5] rounded-[12px] cursor-pointer hover:bg-[#F5F5F5] transition">
+                <input type="radio" name="new_method" value="midtrans" class="text-[#C1121F] focus:ring-[#C1121F]"> 💳 Bayar Online
             </label>
-            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-gray-50">
-                <input type="radio" name="new_method" value="cash" class="text-primary-600"> 🏪 Warung GoMad
+            <label class="flex items-center gap-3 p-3 border border-[#E5E5E5] rounded-[12px] cursor-pointer hover:bg-[#F5F5F5] transition">
+                <input type="radio" name="new_method" value="cash" class="text-[#C1121F] focus:ring-[#C1121F]"> 🏪 Warung GoMad
             </label>
             @if($booking->schedule->allow_cod)
-            <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-gray-50">
-                <input type="radio" name="new_method" value="cod" class="text-primary-600"> 🚗 COD
+            <label class="flex items-center gap-3 p-3 border border-[#E5E5E5] rounded-[12px] cursor-pointer hover:bg-[#F5F5F5] transition">
+                <input type="radio" name="new_method" value="cod" class="text-[#C1121F] focus:ring-[#C1121F]"> 🚗 COD
             </label>
             @endif
             <div class="flex gap-3 mt-4">
-                <button type="submit" class="flex-1 btn-primary">Ganti</button>
-                <button type="button" onclick="document.getElementById('changePaymentModal').style.display='none'" class="flex-1 border py-2 rounded-xl">Batal</button>
+                <button type="submit" class="flex-1 btn-gomad-primary">Ganti</button>
+                <button type="button" onclick="document.getElementById('changePaymentModal').style.display='none'" class="flex-1 border border-[#E5E5E5] py-2 rounded-[12px] font-medium hover:bg-[#F5F5F5] transition">Batal</button>
             </div>
         </form>
     </div>
 </div>
 @endif
 
-@endsection
 
 @push('scripts')
 <script>
@@ -748,3 +731,4 @@ function confirmCancel() {
 }
 </script>
 @endpush
+@endsection

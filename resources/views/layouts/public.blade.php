@@ -36,147 +36,165 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-white font-sans text-secondary overflow-x-auto">
+<body class="bg-white text-[#111111] font-sans antialiased">
 
     {{-- HEADER --}}
-    <header class="sticky-header" x-data="{ mobileMenu: false }" id="mainHeader">
-        <div class="container-custom">
-            <div class="flex items-center justify-between h-16 md:h-20">
-                {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2 flex-shrink-0">
-                    {{-- Logo Putih (default) --}}
-                    <img src="{{ asset('images/bulat-putih.png') }}" alt="GoMad" class="logo-white h-8 md:h-14 w-auto">
-                    {{-- Logo Berwarna (saat scroll) --}}
-                    <img src="{{ asset('images/bulat-merah.png') }}" alt="GoMad" class="logo-colored h-8 md:h-14 w-auto">
-                </a>
+    <header class="fixed top-0 left-0 right-0 z-50 h-16 md:h-20" id="mainHeader" x-data="{ mobileMenu: false }">
+        <div class="container-magazine h-full flex items-center justify-between">
+            
+            {{-- LOGO --}}
+            <a href="{{ route('home') }}" class="flex items-center gap-3 z-50">
+                <img src="{{ asset('images/logo-putih.png') }}" alt="GoMad" class="h-8 md:h-10 w-auto logo-white transition-opacity duration-300">
+                <img src="{{ asset('images/logo-merah.png') }}" alt="GoMad" class="h-8 md:h-10 w-auto logo-colored hidden transition-opacity duration-300">
+            </a>
 
-                {{-- Menu Desktop --}}
-                <nav class="hidden md:flex items-center gap-6 lg:gap-8">
-                    <a href="{{ route('home') }}" class="nav-link text-sm font-medium {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
-                    <a href="{{ route('search') }}" class="nav-link text-sm font-medium {{ request()->routeIs('search') ? 'active' : '' }}">Cari Jadwal</a>
-                    <a href="{{ route('listing') }}" class="nav-link text-sm font-medium {{ request()->routeIs('listing') ? 'active' : '' }}">Agency</a>
-                    <a href="{{ route('download-app') }}" class="nav-link text-sm font-medium">Download App</a>
-                    <a href="{{ route('eticket.public') }}" class="nav-link text-sm font-medium">Cek E-Ticket</a>
-                </nav>
+            {{-- DESKTOP NAV --}}
+            <nav class="hidden lg:flex items-center gap-8">
+                @foreach([
+                    ['route' => 'home', 'label' => 'Beranda'],
+                    ['route' => 'search', 'label' => 'Cari Jadwal'],
+                    ['route' => 'listing', 'label' => 'Agency'],
+                    ['route' => 'download-app', 'label' => 'App'],
+                    ['route' => 'eticket.public', 'label' => 'E-Ticket']
+                ] as $link)
+                    <a href="{{ route($link['route']) }}" 
+                       class="nav-link text-sm font-medium transition-colors duration-300 relative
+                       {{ request()->routeIs($link['route']) ? 'active' : '' }}">
+                        {{ $link['label'] }}
+                    </a>
+                @endforeach
+            </nav>
 
-                {{-- Auth Desktop --}}
-                <div class="hidden md:flex items-center gap-3 flex-shrink-0">
-                    @auth
-                        <a href="{{ route(\App\Enums\UserRole::from(auth()->user()->role)->defaultRedirectRoute()) }}"
-                           class="btn-auth">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn-auth-outline text-sm">Masuk</a>
-                        <a href="{{ route('register') }}" class="btn-auth text-sm">Daftar</a>
-                    @endauth
-                </div>
-
-                {{-- Mobile Menu Toggle --}}
-                <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 mobile-toggle-icon" id="mobileToggle">
-                    <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <svg x-show="mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
+            {{-- AUTH BUTTONS --}}
+            <div class="hidden lg:flex items-center gap-3 z-50">
+                @auth
+                    <a href="{{ route(\App\Enums\UserRole::from(auth()->user()->role)->defaultRedirectRoute()) }}" 
+                       class="btn-gomad-outline text-sm py-2 px-5 transition-all">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm font-medium transition-colors nav-link">Masuk</a>
+                    <a href="{{ route('register') }}" class="btn-gomad-primary bg-white text-[#C1121F] hover:bg-[#111111] hover:text-white text-sm py-2 px-5 transition-all">Daftar</a>
+                @endauth
             </div>
+            
+            {{-- MOBILE TOGGLE --}}
+            <button @click="mobileMenu = !mobileMenu" class="lg:hidden mobile-toggle-btn outline-none transition-colors duration-300 relative z-50">
+                <svg x-show="!mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg x-show="mobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+
         </div>
 
-        {{-- Mobile Menu Dropdown --}}
-        <div x-show="mobileMenu" x-cloak class="md:hidden bg-white border-t shadow-lg" @click.outside="mobileMenu = false">
-            <div class="px-4 py-4 space-y-3">
-                <a href="{{ route('home') }}" class="block text-sm font-medium text-gray-700 py-2 {{ request()->routeIs('home') ? 'text-primary-600' : '' }}">Beranda</a>
-                <a href="{{ route('search') }}" class="block text-sm font-medium text-gray-700 py-2 {{ request()->routeIs('search') ? 'text-primary-600' : '' }}">Cari Jadwal</a>
-                <a href="{{ route('listing') }}" class="block text-sm font-medium text-gray-700 py-2 {{ request()->routeIs('listing') ? 'text-primary-600' : '' }}">Agency</a>
-                <a href="{{ route('download-app') }}" class="block text-sm font-medium text-gray-700 py-2">Download App</a>
-                <a href="{{ route('eticket.public') }}" class="block text-sm font-medium text-gray-700 py-2">Cek E-Ticket</a>
-                <hr class="border-gray-100">
+        {{-- MOBILE DRAWER --}}
+        <div x-show="mobileMenu" x-cloak 
+             @click="mobileMenu = false" 
+             class="fixed inset-0 bg-[#111111]/50 z-40 lg:hidden"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+        </div>
+
+        <div x-show="mobileMenu" x-cloak 
+             class="fixed right-0 top-0 h-full w-3/4 max-w-sm bg-white shadow-2xl z-50 lg:hidden flex flex-col p-8"
+             x-transition:enter="transition transform ease-out duration-300"
+             x-transition:enter-start="transform translate-x-full"
+             x-transition:enter-end="transform translate-x-0"
+             x-transition:leave="transition transform ease-in duration-200"
+             x-transition:leave-start="transform translate-x-0"
+             x-transition:leave-end="transform translate-x-full"
+             @click.away="mobileMenu = false">
+            
+            <div class="mb-10">
+                <img src="{{ asset('images/logo-merah.png') }}" alt="GoMad" class="h-10 w-auto">
+            </div>
+
+            <div class="flex flex-col gap-6 text-lg font-medium text-[#111111]">
+                <a href="{{ route('home') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Beranda</a>
+                <a href="{{ route('search') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Cari Jadwal</a>
+                <a href="{{ route('listing') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Agency</a>
+                <a href="{{ route('download-app') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Download App</a>
+                <a href="{{ route('eticket.public') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Cek E-Ticket</a>
+            </div>
+
+            <div class="mt-auto pt-8 border-t border-[#E5E5E5] flex flex-col gap-3">
                 @auth
-                    <a href="{{ route(\App\Enums\UserRole::from(auth()->user()->role)->defaultRedirectRoute()) }}"
-                       class="block btn-primary text-center">Dashboard</a>
+                    <a href="{{ route(\App\Enums\UserRole::from(auth()->user()->role)->defaultRedirectRoute()) }}" class="btn-gomad-primary text-center w-full">Dashboard</a>
                 @else
-                    <a href="{{ route('login') }}" class="block text-sm font-medium text-gray-700 py-2">Masuk</a>
-                    <a href="{{ route('register') }}" class="block btn-primary text-center">Daftar</a>
+                    <a href="{{ route('login') }}" class="btn-gomad-outline text-center w-full">Masuk</a>
+                    <a href="{{ route('register') }}" class="btn-gomad-primary text-center w-full">Daftar</a>
                 @endauth
             </div>
         </div>
     </header>
 
-    {{-- MAIN CONTENT --}}
-    <main class="min-h-screen">
+    {{-- MAIN --}}
+    <main class="pt-16 md:pt-20 min-h-screen">
         @yield('content')
     </main>
 
-    {{-- BOTTOM NAVIGATION MOBILE --}}
-    <nav class="bottom-nav md:hidden">
+    {{-- BOTTOM NAV --}}
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-[#E5E5E5] z-40 lg:hidden">
         <div class="flex items-center justify-around py-2">
-            <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 text-xs {{ request()->routeIs('home') ? 'text-primary-600' : 'text-gray-500' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('home') ? 'text-[#C1121F]' : 'text-gray-500' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"/></svg>
                 <span>Beranda</span>
             </a>
-            <a href="{{ route('search') }}" class="flex flex-col items-center gap-1 text-xs {{ request()->routeIs('search') ? 'text-primary-600' : 'text-gray-500' }}">
+            <a href="{{ route('search') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('search') ? 'text-[#C1121F]' : 'text-gray-500' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <span>Cari</span>
             </a>
-            <a href="{{ route('listing') }}" class="flex flex-col items-center gap-1 text-xs {{ request()->routeIs('listing') ? 'text-primary-600' : 'text-gray-500' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <a href="{{ route('listing') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('listing') ? 'text-[#C1121F]' : 'text-gray-500' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3"/></svg>
                 <span>Agency</span>
             </a>
             @auth
-            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center gap-1 text-xs {{ request()->routeIs('customer.profile') ? 'text-primary-600' : 'text-gray-500' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <a href="{{ route('customer.profile') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('customer.profile') ? 'text-[#C1121F]' : 'text-gray-500' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14"/></svg>
                 <span>Profil</span>
-            </a>
-            @else
-            <a href="{{ route('login') }}" class="flex flex-col items-center gap-1 text-xs text-gray-500">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                <span>Masuk</span>
             </a>
             @endauth
         </div>
     </nav>
 
     {{-- FOOTER --}}
-    <footer class="bg-gray-900 text-white pt-16 pb-24 md:pb-8">
-        <div class="container-custom">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
+    <footer class="bg-[#111111] text-white py-16 md:py-24 relative overflow-hidden mt-12">
+        <div class="container-magazine grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
+            <div class="md:col-span-1 flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-4xl font-bold tracking-tighter">GO</span>
+                    <span class="text-[#C1121F] text-4xl font-bold tracking-tighter">MAD</span>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Mobilitas orèng Madhurâ. Terhubung, bukan sekadar sampai.</p>
+            </div>
+            
+            <div class="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
                 <div>
-                    <img src="{{ asset('images/bulat-putih.png') }}" alt="GoMad" class="h-14 mb-4">
-                    <p class="text-gray-400 text-sm leading-relaxed">Mobilitas orèng Madhurâ. Platform booking travel antar kota di Madura. Door-to-door service.</p>
+                    <h4 class="font-semibold text-white mb-4">Layanan</h4>
+                    <ul class="space-y-2 text-gray-400"><li>Ekonomi</li><li>Premium</li><li>Charter</li></ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold mb-4">Layanan</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Ekonomi</a></li>
-                        <li><a href="#" class="hover:text-white transition">Premium</a></li>
-                        <li><a href="#" class="hover:text-white transition">Charter</a></li>
-                        <li><a href="#" class="hover:text-white transition">Rental</a></li>
-                    </ul>
+                    <h4 class="font-semibold text-white mb-4">Tautan</h4>
+                    <ul class="space-y-2 text-gray-400"><li>Beranda</li><li>Cari</li><li>E-Ticket</li></ul>
                 </div>
                 <div>
-                    <h4 class="font-semibold mb-4">Tautan</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="{{ route('home') }}" class="hover:text-white transition">Beranda</a></li>
-                        <li><a href="{{ route('search') }}" class="hover:text-white transition">Cari Jadwal</a></li>
-                        <li><a href="{{ route('listing') }}" class="hover:text-white transition">Agency</a></li>
-                        <li><a href="{{ route('eticket.public') }}" class="hover:text-white transition">Cek E-Ticket</a></li>
-                        <li><a href="{{ route('download-app') }}" class="hover:text-white transition">Download App</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Kontak</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li class="flex items-center gap-2"><span>📞</span> 0812-3456-7890</li>
-                        <li class="flex items-center gap-2"><span>✉️</span> support@gomad.id</li>
-                        <li class="flex items-center gap-2"><span>📍</span> Sumenep, Madura</li>
-                    </ul>
+                    <h4 class="font-semibold text-white mb-4">Kontak</h4>
+                    <ul class="space-y-2 text-gray-400"><li>support@gomad.id</li><li>Sumenep, Madura</li></ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-                <p>&copy; {{ date('Y') }} GoMad. All rights reserved.</p>
-            </div>
+        </div>
+        
+        <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzR2LTRIMjR2NEgxMnYxMmwxMiAxMlY0MGgxMnYxMmgxMlYzNHoiLz48L2c+PC9nPjwvc3ZnPg==')]"></div>
+
+        <div class="container-magazine mt-12 pt-8 border-t border-white/10 text-center text-gray-500 text-xs relative z-10">
+            &copy; {{ date('Y') }} GoMad. All rights reserved.
         </div>
     </footer>
 

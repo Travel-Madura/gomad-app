@@ -1,5 +1,4 @@
 import './bootstrap';
-import "@fontsource/league-spartan";
 import Alpine from 'alpinejs';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -13,23 +12,47 @@ L.Icon.Default.mergeOptions({
     shadowUrl: '/images/leaflet/marker-shadow.png',
 });
 
+// --- SETTING GLOBAL CHART.JS ---
+// Agar chart tidak putih semua, set warna teks dan grid menjadi gelap
+Chart.defaults.color = '#111111'; // Warna teks (label, legend, tooltip)
+Chart.defaults.borderColor = '#E5E5E5'; // Warna grid line
+
 window.Alpine = Alpine;
 window.Chart = Chart;
 Alpine.start();
 
-// Sticky Header
+// --- Connected Journey: Line Animation & Transformations ---
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Sticky Header Transformation
     const header = document.getElementById('mainHeader');
     if (header) {
         const updateHeader = () => {
-            if (window.scrollY > 50) header.classList.add('scrolled');
-            else header.classList.remove('scrolled');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+                header.classList.add('bg-white/90', 'backdrop-blur-md', 'border-b', 'border-[#E5E5E5]');
+                header.classList.remove('bg-[#C1121F]', 'shadow-none');
+            } else {
+                header.classList.remove('scrolled');
+                header.classList.remove('bg-white/90', 'backdrop-blur-md', 'border-b', 'border-[#E5E5E5]');
+                header.classList.add('bg-[#C1121F]');
+            }
         };
         updateHeader();
         window.addEventListener('scroll', updateHeader);
     }
-    
-    // Auto-hide alert
+
+    // 2. Scroll Reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.querySelector('.reveal-line')?.classList.add('animate-line-draw');
+            }
+        });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+    // 3. Auto-hide alerts
     const alertMsg = document.getElementById('alertMsg');
     if (alertMsg) setTimeout(() => alertMsg.style.display = 'none', 5000);
 });

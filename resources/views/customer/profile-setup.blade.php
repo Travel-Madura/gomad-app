@@ -3,58 +3,53 @@
 @section('title', 'Lengkapi Profil')
 @section('content')
 <div class="max-w-md mx-auto px-4 py-12">
-    <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] shadow-sm p-8">
         <div class="text-center mb-6">
-            <div class="text-5xl mb-4">🧑</div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Lengkapi Profil</h1>
-            <p class="text-gray-500">Isi data diri Anda untuk pengalaman yang lebih baik</p>
+            <div class="w-16 h-16 bg-[#F5F5F5] rounded-[12px] flex items-center justify-center text-3xl mx-auto mb-4 border border-[#E5E5E5]">🧑</div>
+            <h1 class="text-2xl font-bold text-[#111111] mb-2">Lengkapi Profil</h1>
+            <p class="text-gray-500 font-light">Isi data diri Anda untuk pengalaman yang lebih baik</p>
         </div>
 
         @if(session('warning'))
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4 text-sm text-yellow-800">
+        <div class="bg-[#F5F5F5] border border-yellow-200 rounded-[12px] p-4 mb-4 text-sm text-yellow-800">
             {{ session('warning') }}
         </div>
         @endif
 
         @if(!auth()->user()->phone)
-        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-800">
-            <p class="font-medium flex items-center gap-2">
+        <div class="bg-[#F5F5F5] border border-blue-200 rounded-[12px] p-4 mb-6 text-sm text-blue-800">
+            <p class="font-medium flex items-center gap-2 font-mono uppercase tracking-wider text-xs">
                 <span>📱</span> Nomor WhatsApp Diperlukan
             </p>
-            <p class="mt-1">Nomor WhatsApp digunakan untuk:</p>
-            <ul class="list-disc list-inside mt-2 space-y-1 text-blue-700">
-                <li>Notifikasi booking via WhatsApp</li>
-                <li>Kontak dari driver saat penjemputan</li>
-                <li>Pengiriman E-Ticket</li>
-            </ul>
+            <p class="mt-1 font-light">Nomor WhatsApp digunakan untuk notifikasi booking, kontak driver, dan pengiriman E-Ticket.</p>
         </div>
         @endif
 
         <form action="{{ route('customer.setup.save') }}" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Nama Lengkap <span class="text-[#C1121F]">*</span></label>
                 <input type="text" name="name" value="{{ old('name', $user->name) }}" 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" required>
+                       class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" required>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
+                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Alamat Email</label>
                 <input type="email" value="{{ $user->email }}" disabled
-                       class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500">
-                <p class="text-xs text-gray-400 mt-1">Email yang digunakan saat pendaftaran</p>
+                       class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] bg-transparent text-gray-400 cursor-not-allowed">
+                <p class="text-[10px] text-gray-400 mt-1 font-light">Email yang digunakan saat pendaftaran</p>
             </div>
             <div>
-                <label class="block text-sm font-medium text-secondary mb-1">
+                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">
                     Nomor WhatsApp 
                     @if(!auth()->user()->phone)
-                    <span class="text-red-500">*</span>
+                    <span class="text-[#C1121F]">*</span>
                     @endif
                 </label>
                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" 
-                       class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50" 
+                       class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-[#111111] transition" 
                        placeholder="081234567890"
                        {{ auth()->user()->phone ? '' : 'required' }}>
-                <p class="text-xs text-gray-500 mt-1">
+                <p class="text-[10px] text-gray-400 mt-1 font-light">
                     @if(auth()->user()->phone)
                     Nomor WhatsApp Anda saat ini
                     @else
@@ -63,7 +58,7 @@
                 </p>
             </div>
 
-            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-primary-dark transition">
+            <button type="submit" class="w-full btn-gomad-primary mt-2 text-base py-3 rounded-[12px]">
                 💾 SIMPAN PROFIL
             </button>
         </form>
@@ -73,7 +68,7 @@
             @csrf
             <input type="hidden" name="name" value="{{ $user->name }}">
             <input type="hidden" name="skip" value="1">
-            <button type="submit" class="w-full border border-gray-300 text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+            <button type="submit" class="w-full border border-[#E5E5E5] text-gray-600 py-3 rounded-[12px] font-medium hover:bg-[#F5F5F5] transition">
                 ⏭️ LEWATI (ISI NANTI)
             </button>
         </form>

@@ -2,55 +2,49 @@
 
 @section('title', 'Booking Saya')
 @section('content')
-<div class="container-custom py-8">
-    <h1 class="text-2xl font-bold text-secondary mb-6">Booking Saya</h1>
+<div class="container-magazine py-8">
+    <h1 class="text-2xl font-bold text-[#111111] mb-6">Booking Saya</h1>
 
     @if($bookings->isEmpty())
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
-        <div class="w-16 h-16 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-4">
+    <div class="bg-white border border-[#E5E5E5] rounded-[12px] p-12 text-center shadow-sm">
+        <div class="w-16 h-16 bg-[#F5F5F5] rounded-[12px] flex items-center justify-center mx-auto mb-4 border border-[#E5E5E5]">
             <span class="text-2xl">🎫</span>
         </div>
-        <p class="text-gray-500 text-lg mb-4">Belum ada booking.</p>
-        <a href="{{ route('customer.search') }}" class="btn-primary">Cari Jadwal Travel</a>
+        <p class="text-gray-500 text-lg font-light mb-4">Belum ada booking.</p>
+        <a href="{{ route('customer.search') }}" class="btn-gomad-primary inline-block">Cari Jadwal Travel</a>
     </div>
     @else
     <div class="space-y-4">
         @foreach($bookings as $booking)
-        <a href="{{ route('customer.booking.show', $booking) }}" class="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
+        <a href="{{ route('customer.booking.show', $booking) }}" class="block bg-white border border-[#E5E5E5] rounded-[12px] p-5 shadow-sm hover:border-[#C1121F] transition-colors">
             <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                 <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                        <h3 class="font-bold text-lg text-secondary">{{ $booking->booking_code }}</h3>
-                        {{-- Di bagian status booking --}}
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="font-bold text-[#111111] font-mono text-lg">{{ $booking->booking_code }}</h3>
                         @if($booking->status == 'paid' || $booking->status == 'on_going')
-                        <span class="inline-block mt-2 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">Sudah Dibayar</span>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200">Sudah Dibayar</span>
                         @elseif($booking->status == 'confirmed' && $booking->payment && $booking->payment->payment_type == 'cod')
-                        <span class="inline-block mt-2 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded-full">COD - Bayar ke Sopir</span>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-1 rounded-full border border-orange-200">COD</span>
                         @elseif($booking->status == 'confirmed')
-                        <span class="inline-block mt-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Terkonfirmasi</span>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-200">Terkonfirmasi</span>
                         @elseif($booking->status == 'pending')
-                        <span class="inline-block mt-2 text-xs text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">Menunggu Pembayaran</span>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-200">Menunggu</span>
                         @endif
                     </div>
                     @if($booking->originStop && $booking->destinationStop)
-                    <p class="text-gray-700 font-medium">{{ $booking->originStop->city_name }} → {{ $booking->destinationStop->city_name }}</p>
+                    <p class="text-[#111111] font-medium">{{ $booking->originStop->city_name }} → {{ $booking->destinationStop->city_name }}</p>
                     @endif
                     @if($booking->schedule)
-                    <p class="text-sm text-gray-500 mt-1">📅 {{ $booking->schedule->departure_date->format('d M Y') }} | 🕐 {{ $booking->schedule->departure_time }} | 🏢 {{ $booking->schedule->agency->agency_name ?? '-' }}</p>
+                    <p class="text-sm text-gray-500 mt-1 font-light">📅 {{ $booking->schedule->departure_date->format('d M Y') }} | 🕐 {{ $booking->schedule->departure_time }} | 🏢 {{ $booking->schedule->agency->agency_name ?? '-' }}</p>
                     @endif
-                    <p class="text-sm text-gray-500 mt-1">👥 {{ $booking->total_passengers }} penumpang</p>
+                    <p class="text-sm text-gray-500 mt-1 font-light">👥 {{ $booking->total_passengers }} penumpang</p>
                     @php $promoUsage = \App\Models\PromoUsage::where('booking_id', $booking->id)->first(); @endphp
                     @if($promoUsage && $promoUsage->discount_amount > 0)
-                    <p class="text-xs text-purple-600 mt-1">Diskon Rp {{ number_format($promoUsage->discount_amount, 0, ',', '.') }}</p>
+                    <p class="text-xs text-[#C1121F] font-mono uppercase tracking-wider mt-1">Diskon Rp {{ number_format($promoUsage->discount_amount, 0, ',', '.') }}</p>
                     @endif
                 </div>
                 <div class="text-right flex-shrink-0">
-                    <p class="text-xl font-bold text-primary-600">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</p>
-                    @if($booking->status == 'paid' || $booking->status == 'on_going')
-                    <span class="inline-block mt-2 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">Sudah Dibayar</span>
-                    @elseif($booking->status == 'pending')
-                    <span class="inline-block mt-2 text-xs text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">Menunggu Pembayaran</span>
-                    @endif
+                    <p class="text-xl font-bold text-[#C1121F] font-mono">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</p>
                 </div>
             </div>
         </a>

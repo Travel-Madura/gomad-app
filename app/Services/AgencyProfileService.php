@@ -104,4 +104,39 @@ class AgencyProfileService
         }
         return null;
     }
+
+    /**
+     * Get public profile data untuk halaman agency
+     */
+    public function getPublicProfile(Agency $agency): array
+    {
+        $agency->load([
+            'user',
+            'vehicles' => function ($query) {
+                $query->where('is_active', true);
+            },
+            'reviews' => function ($query) {
+                $query->latest()->limit(5)->with('customer');
+            },
+        ]);
+
+        $activeSchedules = $agency->schedules()
+            ->where('departure_date', '>=', now()->toDateString())
+            ->where('is_active', true)
+            ->with(['route', 'vehicle'])
+            ->limit(5)
+            ->get();
+
+        return [
+            'agency' => $agency,
+            'active_schedules' => $activeSchedules,
+            'total_reviews' => $agency->reviews()->count(),
+            'average_rating' => $agency->rating,
+            'total_vehicles' => $agency->vehicles()->where('is_active', true)->count(),
+            'gallery' => $agency->gallery ?? [],
+            'services' => $agency->services ?? [],
+            'social_media' => $agency->social_media ?? [],
+            'business_hours' => $agency->business_hours ?? [],
+        ];
+    }
 }
