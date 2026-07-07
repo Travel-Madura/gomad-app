@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Beranda')
-@section('meta_description', 'GoMad - Mobilitas orèng Madhurâ. Platform booking travel antar kota di Madura. Dijemput di rumah, diantar ke tujuan.')
+@section('meta_description', 'GoMad - Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.')
 @section('og_image', asset('images/og-home.jpg'))
 
 @section('content')
@@ -38,9 +38,38 @@
                 Service
             </h1>
             
-            <p class="text-base md:text-lg text-white/100 max-w-md leading-relaxed font-light mx-auto">
-                Tak perlu datang ke terminal. Gomad siap menjemput.
-            </p>
+            <div class="text-base md:text-lg text-white/100 max-w-md leading-relaxed font-light mx-auto min-h-[3rem] md:min-h-[4rem] flex items-center justify-center"
+                x-data="{
+                    texts: [
+                        'Tak perlu datang ke terminal. Gomad siap menjemput.',
+                        'Mobilitas orèng Madhurâ, tanpa batas jarak.',
+                        'Pesan sekarang, sampai ke rumah tanpa ribet.'
+                    ],
+                    currentIndex: 0,
+                    interval: null,
+                    startRotation() {
+                        this.interval = setInterval(() => {
+                            this.currentIndex = (this.currentIndex + 1) % this.texts.length;
+                        }, 4000);
+                    },
+                    stopRotation() {
+                        clearInterval(this.interval);
+                    }
+                }"
+                x-init="startRotation()"
+                @mouseenter="stopRotation()"
+                @mouseleave="startRotation()">
+                
+                <span x-show="true" 
+                    x-text="texts[currentIndex]"
+                    x-transition:enter="transition ease-in-out duration-500 transform"
+                    x-transition:enter-start="opacity-0 translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in-out duration-500 transform"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-2">
+                </span>
+            </div>
         </div>
     </div>
     

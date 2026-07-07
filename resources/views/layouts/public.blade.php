@@ -6,14 +6,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- SEO Meta --}}
-    <meta name="description" content="@yield('meta_description', 'GoMad - Mobilitas orèng Madhurâ. Platform booking travel antar kota di Madura. Dijemput di rumah, diantar ke tujuan.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'GoMad, travel madura, booking travel, sumenep surabaya, travel antar kota, warung gomad')">
+    <meta name="description" content="@yield('meta_description', 'GoMad - Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'GoMad, transportasi, booking travel, sumenep surabaya, travel antar kota, warung gomad')">
     <meta name="author" content="GoMad">
     <meta name="robots" content="index, follow">
 
     {{-- Open Graph --}}
-    <meta property="og:title" content="@yield('og_title', 'GoMad - Mobilitas orèng Madhurâ')">
-    <meta property="og:description" content="@yield('og_description', 'Platform booking travel antar kota di Madura. Dijemput di rumah, diantar ke tujuan.')">
+    <meta property="og:title" content="@yield('og_title', 'GoMad - Solusi transportasi Anda')">
+    <meta property="og:description" content="@yield('og_description', 'GoMad - Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
@@ -21,8 +21,8 @@
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('og_title', 'GoMad - Mobilitas orèng Madhurâ')">
-    <meta name="twitter:description" content="@yield('og_description', 'Platform booking travel antar kota di Madura.')">
+    <meta name="twitter:title" content="@yield('og_title', 'GoMad - Solusi transportasi Anda')">
+    <meta name="twitter:description" content="@yield('og_description', 'GoMad - Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.')">
     <meta name="twitter:image" content="@yield('og_image', asset('images/og-default.jpg'))">
 
     {{-- Canonical --}}
@@ -31,7 +31,7 @@
     {{-- Favicon --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 
-    <title>@yield('title', 'GoMad') - Mobilitas orèng Madhurâ</title>
+    <title>@yield('title', 'GoMad') - Solusi transportasi Anda</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -103,7 +103,7 @@
         </div>
 
         <div x-show="mobileMenu" x-cloak 
-             class="fixed right-0 top-0 h-full w-3/4 max-w-sm bg-white shadow-2xl z-50 lg:hidden flex flex-col p-8"
+             class="fixed right-0 top-0 h-screen w-3/4 max-w-sm bg-white shadow-2xl z-[60] lg:hidden flex flex-col p-8"
              x-transition:enter="transition transform ease-out duration-300"
              x-transition:enter-start="transform translate-x-full"
              x-transition:enter-end="transform translate-x-0"
@@ -128,7 +128,7 @@
                 @auth
                     <a href="{{ route(\App\Enums\UserRole::from(auth()->user()->role)->defaultRedirectRoute()) }}" class="btn-gomad-primary text-center w-full">Dashboard</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn-gomad-outline text-center w-full">Masuk</a>
+                    <a href="{{ route('login') }}" class="btn-gomad-outline btn-drawer text-center w-full">Masuk</a>
                     <a href="{{ route('register') }}" class="btn-gomad-primary text-center w-full">Daftar</a>
                 @endauth
             </div>
@@ -169,10 +169,10 @@
         <div class="container-magazine grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
             <div class="md:col-span-1 flex flex-col gap-4">
                 <div class="flex items-center gap-2">
-                    <span class="text-4xl font-bold tracking-tighter">GO</span>
-                    <span class="text-[#C1121F] text-4xl font-bold tracking-tighter">MAD</span>
+                    <span class="text-4xl font-bold tracking-tighter">Go</span>
+                    <span class="text-[#C1121F] text-4xl font-bold tracking-tighter">Mad</span>
                 </div>
-                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Mobilitas orèng Madhurâ. Terhubung, bukan sekadar sampai.</p>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.</p>
             </div>
             
             <div class="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">

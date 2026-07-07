@@ -318,7 +318,23 @@ Route::post('/register', [WebAuthRegisterController::class, 'register']);
 Route::post('/logout', [WebAuthLoginController::class, 'logout'])->name('logout');
 Route::get('/auth/google', [App\Http\Controllers\Web\Auth\GoogleController::class, 'redirect'])->name('google.login');
 Route::get('/auth/google/callback', [App\Http\Controllers\Web\Auth\GoogleController::class, 'callback'])->name('google.callback');
+// Forgot Password
+Route::get('/forgot-password', [App\Http\Controllers\Web\Auth\ForgotPasswordController::class, 'showForgotForm'])
+    ->middleware('guest')
+    ->name('password.request');
 
+Route::post('/forgot-password', [App\Http\Controllers\Web\Auth\ForgotPasswordController::class, 'sendResetLink'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [App\Http\Controllers\Web\Auth\ForgotPasswordController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+Route::post('/reset-password', [App\Http\Controllers\Web\Auth\ForgotPasswordController::class, 'resetPassword'])
+    ->middleware('guest')
+    ->name('password.update');
+    
 // ONE-TIME SEEDER — Step 1: Clear + Core Data (Users, Routes, Agencies)
 Route::get('/seed1-' . env('SEED_TOKEN', 'default'), function () {
     set_time_limit(0);
@@ -376,4 +392,6 @@ Route::get('/seed3-' . env('SEED_TOKEN', 'default'), function () {
     $output .= "\n🎉 ALL DONE! Routes auto-deleted.\n";
     return response("<pre>{$output}</pre>");
 });
+
+
 // End of file

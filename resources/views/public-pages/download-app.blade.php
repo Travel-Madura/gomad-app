@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Download App')
-@section('meta_description', 'Download aplikasi GoMad di Play Store dan App Store. Booking travel Madura jadi lebih mudah.')
+@section('meta_description', 'Download aplikasi GoMad di Play Store dan App Store. Booking travel jadi lebih mudah.')
 @section('og_image', asset('images/og-download.jpg'))
 
 @section('content')

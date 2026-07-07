@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Cari Jadwal')
-@section('meta_description', 'Cari jadwal travel antar kota di Madura. Temukan jadwal yang sesuai dengan rute dan tanggal keberangkatan Anda.')
+@section('meta_description', 'Cari jadwal travel antar kota dengan mudah. Temukan jadwal yang sesuai dengan rute dan tanggal keberangkatan Anda.')
 @section('og_image', asset('images/og-search.jpg'))
 
 @section('content')

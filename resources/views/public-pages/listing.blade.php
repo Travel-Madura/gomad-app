@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Daftar Agency')
-@section('meta_description', 'Daftar agency travel terpercaya di Madura. Pilih agency favorit Anda untuk perjalanan yang nyaman.')
+@section('meta_description', 'Daftar agency travel GoMad. Pilih agency favorit Anda untuk perjalanan yang nyaman.')
 @section('og_image', asset('images/og-agency.jpg'))
 
 @section('content')

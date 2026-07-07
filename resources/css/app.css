@@ -59,6 +59,26 @@ body {
 }
 .btn-gomad-outline:hover { background-color: #111111; color: #FFFFFF; }
 
+/* Tambahkan di app.css di bagian bawah */
+#mainHeader .btn-gomad-outline.btn-drawer {
+    border-color: #C1121F !important;
+    color: #C1121F !important;
+}
+#mainHeader .btn-gomad-outline.btn-drawer:hover {
+    background-color: #C1121F !important;
+    color: #FFFFFF !important;
+}
+
+/* Jika header dalam mode scrolled, tetap gunakan warna hitam untuk tombol drawer */
+#mainHeader.scrolled .btn-gomad-outline.btn-drawer {
+    border-color: #C1121F !important;
+    color: #C1121F !important;
+}
+#mainHeader.scrolled .btn-gomad-outline.btn-drawer:hover {
+    background-color: #C1121F !important;
+    color: #FFFFFF !important;
+}
+
 .stat-number {
     font-family: 'Geist Mono', monospace;
     font-size: 4.5rem;
