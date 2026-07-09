@@ -42,7 +42,7 @@
                 x-data="{
                     texts: [
                         'Tak perlu datang ke terminal. Gomad siap menjemput.',
-                        'Mobilitas orèng Madhurâ, tanpa batas jarak.',
+                        'Mobilitas antar kota, tanpa batas jarak.',
                         'Pesan sekarang, sampai ke rumah tanpa ribet.'
                     ],
                     currentIndex: 0,
