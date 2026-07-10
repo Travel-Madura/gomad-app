@@ -2,7 +2,7 @@
 
 @section('title', 'Sewa Kendaraan')
 @section('meta_description', 'Sewa kendaraan + supir untuk keperluan Anda. Harga per KM, fleksibel, tersedia di Madura dan sekitarnya.')
-@section('og_image', asset('images/og-rental.jpg'))
+@section('og_image', asset('images/og-default.png'))
 
 @section('content')
 

@@ -2,7 +2,7 @@
 
 @section('title', $agency->agency_name ?? 'Profil Agency')
 @section('meta_description', $agency->description ?? 'Profil agency travel ' . $agency->agency_name)
-@section('og_image', $agency->logo ?  $agency->logo : asset('images/og-default.jpg'))
+@section('og_image', $agency->logo ?  $agency->logo : asset('images/og-default.png'))
 
 @section('content')
 @php

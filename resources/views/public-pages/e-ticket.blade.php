@@ -2,7 +2,7 @@
 
 @section('title', 'Cek E-Ticket')
 @section('meta_description', 'Cek dan download E-Ticket booking GoMad Anda. Masukkan kode booking untuk melihat tiket.')
-@section('og_image', asset('images/og-eticket.jpg'))
+@section('og_image', asset('images/og-eticket.png'))
 
 @section('content')
 <div class="section mt-10 mb-20">

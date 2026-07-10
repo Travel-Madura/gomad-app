@@ -2,7 +2,7 @@
 
 @section('title', 'Cari Jadwal')
 @section('meta_description', 'Cari jadwal travel antar kota dengan mudah. Temukan jadwal yang sesuai dengan rute dan tanggal keberangkatan Anda.')
-@section('og_image', asset('images/og-search.jpg'))
+@section('og_image', asset('images/og-search.png'))
 
 @section('content')
 @php

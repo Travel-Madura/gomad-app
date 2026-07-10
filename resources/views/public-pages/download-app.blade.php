@@ -2,7 +2,7 @@
 
 @section('title', 'Download App')
 @section('meta_description', 'Download aplikasi GoMad di Play Store dan App Store. Booking travel jadi lebih mudah.')
-@section('og_image', asset('images/og-download.jpg'))
+@section('og_image', asset('images/og-download.png'))
 
 @section('content')
 <div class="section mb-20 mt-10">

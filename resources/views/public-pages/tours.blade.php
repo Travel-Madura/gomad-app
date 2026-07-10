@@ -2,7 +2,7 @@
 
 @section('title', 'Paket Wisata')
 @section('meta_description', 'Jelajahi paket wisata seru dari agency terpercaya. Tour, wisata, dan liburan jadi mudah dengan GoMad.')
-@section('og_image', asset('images/og-tour.jpg'))
+@section('og_image', asset('images/og-default.png'))
 
 @section('content')
 

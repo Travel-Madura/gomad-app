@@ -2,7 +2,7 @@
 
 @section('title', 'Daftar Agency')
 @section('meta_description', 'Daftar agency travel GoMad. Pilih agency favorit Anda untuk perjalanan yang nyaman.')
-@section('og_image', asset('images/og-agency.jpg'))
+@section('og_image', asset('images/og-agency.png'))
 
 @section('content')
 @php

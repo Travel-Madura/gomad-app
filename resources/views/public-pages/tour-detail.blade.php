@@ -2,7 +2,7 @@
 
 @section('title', $package->name ?? 'Detail Paket Wisata')
 @section('meta_description', Str::limit($package->description ?? 'Paket wisata dari ' . $package->agency->agency_name, 160))
-@section('og_image', $package->cover_image ?? asset('images/og-tour.jpg'))
+@section('og_image', $package->cover_image ?? asset('images/og-default.png'))
 
 @section('content')
 
