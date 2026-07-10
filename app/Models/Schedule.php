@@ -43,7 +43,7 @@ class Schedule extends Model
     protected function casts(): array
     {
         return [
-            'departure_date' => 'date',
+            'departure_date' => 'datetime',
             'departure_time' => 'string',
             'max_overload' => 'integer',
             'price_per_seat' => 'decimal:2',

@@ -7,12 +7,17 @@
 
     <div class="bg-white border-2 border-[#C1121F] rounded-[12px] p-6 shadow-sm">
         <!-- Header -->
+        {{-- Header E-Ticket --}}
         <div class="text-center border-b-2 border-dashed border-[#E5E5E5] pb-4 mb-4">
-            <div class="flex items-center justify-center gap-1 mb-2">
-                <span class="text-2xl font-bold tracking-tighter text-[#111111]">GO</span>
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="text-2xl font-bold tracking-tighter text-[#111111]">
+                    {{ \App\Models\PlatformSetting::getValue('app_name', 'GO') }}
+                </span>
                 <span class="text-[#C1121F] text-2xl font-bold tracking-tighter">MAD</span>
             </div>
-            <p class="text-sm text-gray-400 font-mono tracking-wider">E-Ticket - {{ $booking->booking_code }}</p>
+            <p class="text-xs font-mono text-gray-400 tracking-wider">
+                {{ \App\Models\PlatformSetting::getValue('app_tagline', 'E-Ticket Resmi') }}
+            </p>
         </div>
 
         <!-- Info Utama -->

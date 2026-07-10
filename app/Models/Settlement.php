@@ -35,8 +35,8 @@ class Settlement extends Model
     protected function casts(): array
     {
         return [
-            'period_start' => 'date',
-            'period_end' => 'date',
+            'period_start' => 'datetime',
+            'period_end' => 'datetime',
             'total_transactions' => 'integer',
             'total_amount' => 'decimal:2',
             'total_commission' => 'decimal:2',

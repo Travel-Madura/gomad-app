@@ -6,9 +6,12 @@ namespace App\Services;
 
 use App\Enums\BookingStatus;
 use App\Enums\PaymentStatus;
+use App\Models\User;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\PlatformSetting;
+use App\Models\TourBooking;
+use App\Models\TourPayment;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -427,7 +430,7 @@ class PaymentService
         return $result;
     }
 
-    public function rejectRefund(Booking $booking, User $admin, string $reason): array
+        public function rejectRefund(Booking $booking, User $admin, string $reason): array
     {
         $payment = $booking->payment;
         

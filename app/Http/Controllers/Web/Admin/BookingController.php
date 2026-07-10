@@ -1,37 +1,65 @@
 <?php
-// File: app/Http/Controllers/Web/Admin/BookingController.php
-// Deskripsi: Web Controller untuk monitoring booking oleh admin
 
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\TourBooking;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 
 class BookingController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Booking::with(['schedule.agency', 'schedule.route', 'customer', 'payment']);
+        $type = $request->type ?? 'travel';
+        $status = $request->status;
+        $search = $request->booking_code;
 
-        if ($request->status) {
-            $query->where('status', $request->status);
+        if ($type === 'tour') {
+            $query = \App\Models\TourBooking::with(['tourSchedule.tourPackage.agency', 'customer', 'payment']);
+            if ($status) $query->where('status', $status);
+            if ($search) $query->where('booking_code', 'like', '%' . $search . '%');
+            $bookings = $query->orderBy('created_at', 'desc')->paginate(20);
+        } elseif ($type === 'rental') {
+            $query = \App\Models\RentalBooking::with(['vehicle.agency', 'customer', 'payment']);
+            if ($status) $query->where('status', $status);
+            if ($search) $query->where('booking_code', 'like', '%' . $search . '%');
+            $bookings = $query->orderBy('created_at', 'desc')->paginate(20);
+        } else {
+            $query = \App\Models\Booking::with(['schedule.agency', 'schedule.route', 'customer', 'payment']);
+            if ($status) $query->where('status', $status);
+            if ($search) $query->where('booking_code', 'like', '%' . $search . '%');
+            $bookings = $query->orderBy('created_at', 'desc')->paginate(20);
         }
 
-        if ($request->booking_code) {
-            $query->where('booking_code', 'like', '%' . $request->booking_code . '%');
-        }
+        $totalTravel = \App\Models\Booking::count();
+        $totalTour = \App\Models\TourBooking::count();
+        $totalRental = \App\Models\RentalBooking::count();
 
-        $bookings = $query->orderBy('created_at', 'desc')->paginate(20);
-
-        return view('admin.bookings.index', compact('bookings'));
+        return view('admin.bookings.index', compact('bookings', 'type', 'totalTravel', 'totalTour', 'totalRental'));
     }
 
-    public function show(Booking $booking): View
+    public function show($booking, Request $request): View
     {
-        $booking->load([
+        $type = $request->type ?? 'travel';
+
+        if ($type === 'tour') {
+            $booking = TourBooking::with([
+                'tourSchedule.tourPackage.agency',
+                'tourSchedule.vehicle',
+                'tourSchedule.driver',
+                'customer',
+                'participants',
+                'payment',
+                'originStop',
+            ])->findOrFail($booking);
+            
+            return view('admin.bookings.show-tour', compact('booking', 'type'));
+        }
+
+        $booking = Booking::with([
             'schedule.agency',
             'schedule.route.stops',
             'schedule.vehicle',
@@ -43,9 +71,9 @@ class BookingController extends Controller
             'payment',
             'cashPayment.paymentAgent',
             'review',
-        ]);
+        ])->findOrFail($booking);
 
-        return view('admin.bookings.show', compact('booking'));
+        return view('admin.bookings.show', compact('booking', 'type'));
     }
 
     public function approveRefund(Booking $booking): RedirectResponse
@@ -79,7 +107,4 @@ class BookingController extends Controller
             return back()->with('error', 'Gagal: ' . $e->getMessage());
         }
     }
-
 }
-
-// End of file

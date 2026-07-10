@@ -9,9 +9,17 @@
     <div class="container-magazine">
         @if(!isset($booking))
         <div class="max-w-lg mx-auto">
-            <div class="text-center mb-8 mt-[-4rem] md:mt-[-6rem]">
-                <h1 class="text-3xl font-bold text-[#111111] mb-2">Cek E-Ticket</h1>
-                <p class="text-gray-500 font-light">Masukkan kode booking Anda</p>
+            {{-- Header E-Ticket --}}
+            <div class="text-center border-b-2 border-dashed border-[#E5E5E5] pb-4 mb-4">
+                <div class="flex items-center justify-center gap-2 mb-2">
+                    <span class="text-2xl font-bold tracking-tighter text-[#111111]">
+                        {{ \App\Models\PlatformSetting::getValue('app_name', 'GO') }}
+                    </span>
+                    <span class="text-[#C1121F] text-2xl font-bold tracking-tighter">MAD</span>
+                </div>
+                <p class="text-xs font-mono text-gray-400 tracking-wider">
+                    {{ \App\Models\PlatformSetting::getValue('app_tagline', 'E-Ticket Resmi') }}
+                </p>
             </div>
             
             <div class="card-gomad p-6 md:p-8 border-[#E5E5E5]">

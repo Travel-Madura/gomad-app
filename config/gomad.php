@@ -1,6 +1,4 @@
 <?php
-// File: config/gomad.php
-// Deskripsi: Konfigurasi utama aplikasi GoMad
 
 return [
 
@@ -74,6 +72,73 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Service & Platform Fee
+    |--------------------------------------------------------------------------
+    */
+    'service_fee' => env('SERVICE_FEE', 5000),
+    'platform_fee_percent' => env('PLATFORM_FEE_PERCENT', 3),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tour Configuration
+    |--------------------------------------------------------------------------
+    */
+    'tour' => [
+        'service_fee' => env('TOUR_SERVICE_FEE', 5000),
+        'platform_fee_percent' => env('TOUR_PLATFORM_FEE_PERCENT', 3),
+        'min_participants' => env('TOUR_MIN_PARTICIPANTS', 5),
+        'max_participants' => env('TOUR_MAX_PARTICIPANTS', 20),
+        'cancellation' => [
+            'early_percent' => env('TOUR_CANCEL_EARLY_PCT', 15),   // > 7 hari
+            'early_hours' => env('TOUR_CANCEL_EARLY_HOURS', 168),
+            'mid_percent' => env('TOUR_CANCEL_MID_PCT', 30),       // 3-7 hari
+            'mid_hours' => env('TOUR_CANCEL_MID_HOURS', 72),
+            'late_percent' => env('TOUR_CANCEL_LATE_PCT', 50),     // 1-3 hari
+            'late_hours' => env('TOUR_CANCEL_LATE_HOURS', 24),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Travel Cancellation Configuration
+    |--------------------------------------------------------------------------
+    */
+    'travel_cancellation' => [
+        'percent' => env('TRAVEL_CANCEL_PERCENT', 25),
+        'hours_before' => env('TRAVEL_CANCEL_HOURS', 24),
+        'refund_approval_limit' => env('TRAVEL_REFUND_APPROVAL_LIMIT', 100000),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rental Configuration
+    |--------------------------------------------------------------------------
+    */
+    'rental' => [
+        'service_fee' => env('RENTAL_SERVICE_FEE', 5000),
+        'platform_fee_percent' => env('RENTAL_PLATFORM_FEE_PERCENT', 3),
+        'cancellation' => [
+            'early_percent' => env('RENTAL_CANCEL_EARLY_PCT', 10),   // > 7 hari
+            'early_hours' => env('RENTAL_CANCEL_EARLY_HOURS', 168),
+            'mid_percent' => env('RENTAL_CANCEL_MID_PCT', 25),       // 3-7 hari
+            'mid_hours' => env('RENTAL_CANCEL_MID_HOURS', 72),
+            'late_percent' => env('RENTAL_CANCEL_LATE_PCT', 50),     // 1-3 hari
+            'late_hours' => env('RENTAL_CANCEL_LATE_HOURS', 24),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Referral Configuration
+    |--------------------------------------------------------------------------
+    */
+    'referral' => [
+        'discount_percent' => env('REFERRAL_DISCOUNT_PERCENT', 20),
+        'max_discount' => env('REFERRAL_MAX_DISCOUNT', 30000),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Withdrawal Configuration
     |--------------------------------------------------------------------------
     */
@@ -88,6 +153,20 @@ return [
     */
     'payment_code_prefix' => 'WM',
     'payment_code_expiry_hours' => 24,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Top Up Configuration
+    |--------------------------------------------------------------------------
+    */
+    'topup_admin_fee' => env('TOPUP_ADMIN_FEE', 3500),
+
+    /*
+    |--------------------------------------------------------------------------
+    | COD Configuration
+    |--------------------------------------------------------------------------
+    */
+    'cod_min_deposit_default' => env('COD_MIN_DEPOSIT', 500000),
 
     /*
     |--------------------------------------------------------------------------
@@ -209,5 +288,3 @@ return [
         'city_list' => 1440,
     ],
 ];
-
-// End of file

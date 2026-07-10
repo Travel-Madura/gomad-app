@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Customer') - GoMad</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
@@ -29,6 +31,8 @@
                     <a href="{{ route('customer.home') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.home') ? 'text-[#C1121F]' : '' }}">Home</a>
                     <a href="{{ route('customer.search') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.search') ? 'text-[#C1121F]' : '' }}">Cari Jadwal</a>
                     <a href="{{ route('customer.bookings') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.bookings') ? 'text-[#C1121F]' : '' }}">Booking Saya</a>
+                    <a href="{{ route('customer.tour.index') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.tour.*') ? 'text-[#C1121F]' : '' }}">Wisata</a>
+                    <a href="{{ route('customer.rental.index') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.rental.*') ? 'text-[#C1121F]' : '' }}">Sewa</a>
                     <a href="{{ route('customer.profile') }}" class="hover:text-[#C1121F] transition {{ request()->routeIs('customer.profile') ? 'text-[#C1121F]' : '' }}">Profil</a>
                 </nav>
 
@@ -51,10 +55,12 @@
         {{-- Mobile Menu --}}
         <div x-show="mobileMenu" x-cloak class="md:hidden bg-white border-t border-[#E5E5E5] shadow-lg" @click.outside="mobileMenu = false">
             <div class="container-magazine py-4 space-y-3">
-                <a href="{{ route('customer.home') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">Home</a>
-                <a href="{{ route('customer.search') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">Cari Jadwal</a>
-                <a href="{{ route('customer.bookings') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">Booking Saya</a>
-                <a href="{{ route('customer.profile') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">Profil</a>
+                <a href="{{ route('customer.home') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">🏠 Home</a>
+                <a href="{{ route('customer.search') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">🔍 Cari Jadwal</a>
+                <a href="{{ route('customer.bookings') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">🎫 Booking Saya</a>
+                <a href="{{ route('customer.tour.index') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">🏝️ Paket Wisata</a>
+                <a href="{{ route('customer.rental.index') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">🚐 Sewa Kendaraan</a>
+                <a href="{{ route('customer.profile') }}" class="block text-sm font-medium text-[#111111] py-2 hover:text-[#C1121F] transition">👤 Profil</a>
                 <hr class="border-[#E5E5E5]">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -83,6 +89,10 @@
             <a href="{{ route('customer.bookings') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('customer.bookings') ? 'text-[#C1121F]' : 'text-gray-500' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 <span>Booking</span>
+            </a>
+            <a href="{{ route('customer.rental.index') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('customer.rental.*') ? 'text-[#C1121F]' : 'text-gray-500' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                <span>Sewa</span>
             </a>
             <a href="{{ route('customer.profile') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('customer.profile') ? 'text-[#C1121F]' : 'text-gray-500' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>

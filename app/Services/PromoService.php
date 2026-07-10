@@ -74,23 +74,9 @@ class PromoService
 
         if (!$tracking) return;
 
-        // Tentukan besaran diskon berdasarkan total transaksi
-        $totalPrice = $booking->total_price;
-        $discountPercent = match(true) {
-            $totalPrice >= 1000000 => 50,
-            $totalPrice >= 500000 => 40,
-            $totalPrice >= 250000 => 30,
-            $totalPrice >= 100000 => 20,
-            default => 10,
-        };
-
-        $maxDiscount = match(true) {
-            $totalPrice >= 1000000 => 75000,
-            $totalPrice >= 500000 => 60000,
-            $totalPrice >= 250000 => 50000,
-            $totalPrice >= 100000 => 30000,
-            default => 15000,
-        };
+        // 👇 PAKAI SETTING DINAMIS
+        $discountPercent = (float) \App\Models\PlatformSetting::getValue('referral_discount_percent', 20);
+        $maxDiscount = (float) \App\Models\PlatformSetting::getValue('referral_discount_max', 30000);
 
         // Buat promo referral KHUSUS untuk pengajak (referrer)
         $promo = Promo::create([
@@ -106,7 +92,7 @@ class PromoService
             'platform_share_percent' => 100,
             'agency_share_percent' => 0,
             'is_active' => true,
-            'created_by' => $tracking->referrer_id, // 👈 Penting: tandai milik siapa promo ini
+            'created_by' => $tracking->referrer_id,
         ]);
 
         // Update tracking

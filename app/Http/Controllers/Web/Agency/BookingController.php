@@ -15,11 +15,24 @@ class BookingController extends Controller
     public function index(Request $request): View
     {
         $agency = auth()->user()->agency;
+        $type = $request->type ?? 'travel';
 
-        $query = Booking::with(['schedule.route', 'customer', 'originStop', 'destinationStop', 'payment'])
-            ->whereHas('schedule', function ($q) use ($agency) {
-                $q->where('agency_id', $agency->id);
-            });
+        if ($type === 'tour') {
+            $query = \App\Models\TourBooking::with(['tourSchedule.tourPackage', 'customer', 'payment'])
+                ->whereHas('tourSchedule.tourPackage', function ($q) use ($agency) {
+                    $q->where('agency_id', $agency->id);
+                });
+        } elseif ($type === 'rental') {
+            $query = \App\Models\RentalBooking::with(['vehicle', 'customer', 'payment'])
+                ->whereHas('vehicle', function ($q) use ($agency) {
+                    $q->where('agency_id', $agency->id);
+                });
+        } else {
+            $query = Booking::with(['schedule.route', 'customer', 'originStop', 'destinationStop', 'payment'])
+                ->whereHas('schedule', function ($q) use ($agency) {
+                    $q->where('agency_id', $agency->id);
+                });
+        }
 
         if ($request->status) {
             $query->where('status', $request->status);
@@ -27,28 +40,34 @@ class BookingController extends Controller
 
         $bookings = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('agency.bookings.index', compact('bookings'));
+        return view('agency.bookings.index', compact('bookings', 'type'));
     }
 
-    public function show(Booking $booking): View
+    public function show($booking, Request $request): View
     {
-        $booking->load([
-            'schedule.route.stops',
-            'customer',
-            'originStop',
-            'destinationStop',
-            'passengers',
-            'payment',
-            'cashPayment',
-            'review',
-        ]);
+        $type = $request->type ?? 'travel';
+        $agency = auth()->user()->agency;
 
-        return view('agency.bookings.show', compact('booking'));
+        if ($type === 'tour') {
+            $booking = \App\Models\TourBooking::with([
+                'tourSchedule.tourPackage', 'customer', 'participants', 'payment', 'originStop'
+            ])->findOrFail($booking);
+        } elseif ($type === 'rental') {
+            $booking = \App\Models\RentalBooking::with([
+                'vehicle.agency', 'customer', 'payment'
+            ])->findOrFail($booking);
+            
+            return view('agency.bookings.show-rental', compact('booking', 'type'));
+        } else {
+            $booking = Booking::with([
+                'schedule.route.stops', 'customer', 'originStop', 'destinationStop',
+                'passengers', 'payment', 'cashPayment', 'review',
+            ])->findOrFail($booking);
+        }
+
+        return view('agency.bookings.show', compact('booking', 'type'));
     }
 
-    /**
-     * Update status booking
-     */
     public function updateStatus(Request $request, Booking $booking): RedirectResponse
     {
         $agency = auth()->user()->agency;
@@ -62,20 +81,6 @@ class BookingController extends Controller
         ]);
 
         $newStatus = $request->status;
-
-        // Validasi transisi status
-        $allowedTransitions = [
-            'paid' => ['on_going', 'cancelled'],
-            'on_going' => ['completed'],
-            'pending' => ['confirmed', 'cancelled'],
-            'confirmed' => ['paid', 'cancelled'],
-        ];
-
-        $currentStatus = $booking->status;
-        if (!isset($allowedTransitions[$currentStatus]) || !in_array($newStatus, $allowedTransitions[$currentStatus])) {
-            return back()->with('error', "Tidak dapat mengubah status dari {$currentStatus} ke {$newStatus}.");
-        }
-
         $updateData = ['status' => $newStatus];
 
         if ($newStatus === 'cancelled') {
@@ -84,23 +89,15 @@ class BookingController extends Controller
 
         if ($newStatus === 'completed') {
             $updateData['completed_at'] = now();
-            // Release funds
             app(\App\Services\WalletService::class)->releaseFunds($booking);
-            // Update counter agency
             $agency->increment('total_bookings');
         }
 
         $booking->update($updateData);
 
-        $messages = [
-            'confirmed' => 'Booking dikonfirmasi.',
-            'on_going' => 'Perjalanan dimulai.',
-            'completed' => 'Perjalanan selesai.',
-            'cancelled' => 'Booking dibatalkan.',
-        ];
-
-        return back()->with('success', $messages[$newStatus] ?? 'Status diupdate.');
+        return back()->with('success', 'Status diupdate.');
     }
+
 }
 
 // End of file

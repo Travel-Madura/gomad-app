@@ -27,7 +27,9 @@
                     </div>
                 </a>
                 @if($hasAgency)
-                <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 mt-1 truncate">{{ $agency->agency_name }}</p>
+                <p class="text-[10px] font-mono uppercase tracking-wider text-gray-400 mt-1 truncate">
+                    {{ \App\Models\PlatformSetting::getValue('app_name', 'GoMad') }} Agency
+                </p>
                 @endif
             </div>
             
@@ -48,6 +50,11 @@
                 <a href="{{ route('agency.bookings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('agency.bookings.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
                     <span>🎫</span> Booking
                 </a>
+                <a href="{{ route('agency.tours.index') }}" 
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition 
+                        {{ request()->routeIs('agency.tours.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
+                    <span>🏝️</span> Paket Wisata
+                </a>
                 <a href="{{ route('agency.vehicles.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('agency.vehicles.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
                     <span>🚐</span> Kendaraan
                 </a>
@@ -59,6 +66,15 @@
                 </a>
                 <a href="{{ route('agency.promos.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('agency.promos.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
                     <span>🎫</span> Promo
+                </a>
+                <a href="{{ route('agency.tour-promos.index') }}" 
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition 
+                        {{ request()->routeIs('agency.tour-promos.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
+                    <span>🏝️</span> Promo Wisata
+                </a>
+                <a href="{{ route('agency.rental-promos.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition 
+                    {{ request()->routeIs('agency.rental-promos.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
+                    <span>🚐</span> Promo Rental
                 </a>
                 <a href="{{ route('agency.wallet.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('agency.wallet.*') ? 'bg-[#C1121F]/10 text-[#C1121F] font-semibold' : 'text-gray-600 hover:bg-[#F5F5F5]' }}">
                     <span>💰</span> Dompet

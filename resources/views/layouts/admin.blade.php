@@ -55,7 +55,15 @@
                 <a href="{{ route('admin.promos.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('admin.promos.*') ? 'bg-[#C1121F] text-white' : 'text-gray-400 hover:bg-[#C1121F]/10 hover:text-white' }}">
                     <span>🎫</span> Promo
                 </a>
-                
+                <a href="{{ route('admin.tour-promos.index') }}" 
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition 
+                        {{ request()->routeIs('admin.tour-promos.*') ? 'bg-[#C1121F] text-white' : 'text-gray-400 hover:bg-[#C1121F]/10 hover:text-white' }}">
+                    <span>🏝️</span> Promo Wisata
+                </a>
+                <a href="{{ route('admin.rental-promos.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition 
+                    {{ request()->routeIs('admin.rental-promos.*') ? 'bg-[#C1121F] text-white' : 'text-gray-400 hover:bg-[#C1121F]/10 hover:text-white' }}">
+                    <span>🚐</span> Promo Rental
+                </a>
                 <p class="px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-gray-500 mt-4">Keuangan</p>
                 <a href="{{ route('admin.withdrawals.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-[12px] text-sm transition {{ request()->routeIs('admin.withdrawals.*') ? 'bg-[#C1121F] text-white' : 'text-gray-400 hover:bg-[#C1121F]/10 hover:text-white' }}">
                     <span>💸</span> Withdrawal

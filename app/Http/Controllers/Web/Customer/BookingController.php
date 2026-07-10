@@ -26,7 +26,15 @@ class BookingController extends Controller
 
     public function index(): View
     {
-        $bookings = $this->bookingService->getCustomerBookings(auth()->user());
+        $type = request('type', 'travel');
+        
+        if ($type === 'tour') {
+            $tourService = app(\App\Services\TourService::class);
+            $bookings = $tourService->getCustomerBookings(auth()->id());
+        } else {
+            $bookings = $this->bookingService->getCustomerBookings(auth()->user());
+        }
+        
         return view('customer.booking.my-bookings', compact('bookings'));
     }
 

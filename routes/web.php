@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Public\HomeController as WebPublicHomeController;
 use App\Http\Controllers\Web\Public\SearchController as WebPublicSearchController;
 use App\Http\Controllers\Web\Public\AgencyProfileController as WebPublicAgencyProfileController;
 use App\Http\Controllers\Web\Public\ListingController as WebPublicListingController;
+use App\Http\Controllers\Web\Public\TourController as WebPublicTourController;
 
 // Auth Controllers
 use App\Http\Controllers\Web\Auth\LoginController as WebAuthLoginController;
@@ -18,11 +19,14 @@ use App\Http\Controllers\Web\Auth\RegisterController as WebAuthRegisterControlle
 use App\Http\Controllers\Web\Customer\HomeController as WebCustomerHomeController;
 use App\Http\Controllers\Web\Customer\BookingController as WebCustomerBookingController;
 use App\Http\Controllers\Web\Customer\ProfileController as WebCustomerProfileController;
+use App\Http\Controllers\Web\Customer\TourController as WebCustomerTourController;
+use App\Http\Controllers\Web\Customer\RentalController as WebCustomerRentalController;
 
 // Agency Controllers
 use App\Http\Controllers\Web\Agency\DashboardController as WebAgencyDashboardController;
 use App\Http\Controllers\Web\Agency\ProfileController as WebAgencyProfileController;
 use App\Http\Controllers\Web\Agency\ScheduleController as WebAgencyScheduleController;
+use App\Http\Controllers\Web\Agency\TourPackageController as WebAgencyTourPackageController;
 use App\Http\Controllers\Web\Agency\BookingController as WebAgencyBookingController;
 use App\Http\Controllers\Web\Agency\VehicleController as WebAgencyVehicleController;
 use App\Http\Controllers\Web\Agency\DriverController as WebAgencyDriverController;
@@ -30,6 +34,8 @@ use App\Http\Controllers\Web\Agency\WalletController as WebAgencyWalletControlle
 use App\Http\Controllers\Web\Agency\WithdrawalController as WebAgencyWithdrawalController;
 use App\Http\Controllers\Web\Agency\ReportController as WebAgencyReportController;
 use App\Http\Controllers\Web\Agency\PromoController as WebAgencyPromoController;
+use App\Http\Controllers\Web\Agency\TourPromoController as WebAgencyTourPromoController;
+use App\Http\Controllers\Web\Agency\RentalPromoController as WebAgencyRentalPromoController;
 
 // Driver Controllers
 use App\Http\Controllers\Web\Driver\ScheduleController as WebDriverScheduleController;
@@ -51,6 +57,8 @@ use App\Http\Controllers\Web\Admin\PaymentAgentController as WebAdminPaymentAgen
 use App\Http\Controllers\Web\Admin\RouteController as WebAdminRouteController;
 use App\Http\Controllers\Web\Admin\BookingController as WebAdminBookingController;
 use App\Http\Controllers\Web\Admin\PromoController as WebAdminPromoController;
+use App\Http\Controllers\Web\Admin\RentalPromoController as WebAdminRentalPromoController;
+use App\Http\Controllers\Web\Admin\TourPromoController as WebAdminTourPromoController;
 use App\Http\Controllers\Web\Admin\WithdrawalController as WebAdminWithdrawalController;
 use App\Http\Controllers\Web\Admin\SettlementController as WebAdminSettlementController;
 use App\Http\Controllers\Web\Admin\ReportController as WebAdminReportController;
@@ -79,10 +87,31 @@ Route::middleware(['auth', \App\Http\Middleware\Web\CustomerMiddleware::class])
         Route::post('/booking', [WebCustomerBookingController::class, 'store'])->name('booking.store');
         Route::get('/booking/{booking}', [WebCustomerBookingController::class, 'show'])->name('booking.show');
         Route::get('/booking/{booking}/detail', [WebCustomerBookingController::class, 'detail'])->name('booking.detail');
-        
-        // PAYMENT PROCESS (dari dropdown)
         Route::post('/booking/{booking}/pay-process', [WebCustomerBookingController::class, 'payProcess'])->name('booking.pay-process');
         
+        // Tour Routes
+        Route::get('/tours', [WebCustomerTourController::class, 'index'])->name('tour.index');
+        Route::get('/tours/{package}', [WebCustomerTourController::class, 'show'])->name('tour.show');
+        Route::get('/tour/booking/create', [WebCustomerTourController::class, 'createBooking'])->name('tour.booking.create');
+        Route::post('/tour/booking', [WebCustomerTourController::class, 'storeBooking'])->name('tour.booking.store');
+        Route::get('/tour/booking/{booking}', [WebCustomerTourController::class, 'detail'])->name('tour.detail');
+        Route::post('/tour/booking/{booking}/apply-promo', [WebCustomerTourController::class, 'applyPromo'])->name('tour.apply-promo');
+        Route::post('/tour/booking/{booking}/pay-process', [WebCustomerTourController::class, 'payProcess'])->name('tour.pay-process');
+        Route::get('/tour/my-bookings', [WebCustomerTourController::class, 'myBookings'])->name('tour.bookings');
+        Route::post('/tour/booking/{booking}/cancel', [WebCustomerTourController::class, 'cancel'])->name('tour.cancel');
+
+        // Rental Routes
+        Route::get('/rental', [WebCustomerRentalController::class, 'index'])->name('rental.index');
+        Route::get('/rental/create', [WebCustomerRentalController::class, 'create'])->name('rental.create');
+        Route::post('/rental', [WebCustomerRentalController::class, 'store'])->name('rental.store');
+        Route::get('/rental/booking/{booking}', [WebCustomerRentalController::class, 'detail'])->name('rental.detail');
+        Route::get('/rental/my-bookings', [WebCustomerRentalController::class, 'myBookings'])->name('rental.bookings');
+        Route::post('/rental/booking/{booking}/pay-process', [WebCustomerRentalController::class, 'payProcess'])->name('rental.pay-process');
+        Route::post('/rental/booking/{booking}/cancel', [WebCustomerRentalController::class, 'cancel'])->name('rental.cancel');
+        Route::post('/rental/booking/{booking}/midtrans-token', [WebCustomerRentalController::class, 'getMidtransToken'])
+            ->name('rental.midtrans-token');
+        Route::post('/rental/booking/{booking}/apply-promo', [WebCustomerRentalController::class, 'applyPromo'])->name('rental.apply-promo');
+
         // CHANGE PAYMENT
         Route::post('/booking/{booking}/change-payment', [WebCustomerBookingController::class, 'changePayment'])->name('booking.change-payment');
         
@@ -136,16 +165,36 @@ Route::middleware(['auth', \App\Http\Middleware\Web\AgencyMiddleware::class])
         Route::post('/schedules/{schedule}/assign-driver', [WebAgencyScheduleController::class, 'assignDriver'])->name('schedules.assign-driver');
         Route::post('/schedules/{schedule}/start', [WebAgencyScheduleController::class, 'startSchedule'])->name('schedules.start');
         Route::delete('/schedules/{schedule}', [WebAgencyScheduleController::class, 'destroy'])->name('schedules.destroy');
-// Di dalam grup agency
         Route::delete('/schedules/{schedule}', [WebAgencyScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+        // Tour Packages
+        Route::get('/tours', [WebAgencyTourPackageController::class, 'index'])->name('tours.index');
+        Route::get('/tours/create', [WebAgencyTourPackageController::class, 'create'])->name('tours.create');
+        Route::post('/tours', [WebAgencyTourPackageController::class, 'store'])->name('tours.store');
+        Route::get('/tours/{package}', [WebAgencyTourPackageController::class, 'show'])->name('tours.show');
+        Route::get('/tours/{package}/edit', [WebAgencyTourPackageController::class, 'edit'])->name('tours.edit');
+        Route::put('/tours/{package}', [WebAgencyTourPackageController::class, 'update'])->name('tours.update');
+        Route::delete('/tours/{package}', [WebAgencyTourPackageController::class, 'destroy'])->name('tours.destroy');
+        
+        // Tour Schedule
+        Route::get('/tours/{package}/schedules/create', [WebAgencyTourPackageController::class, 'createSchedule'])->name('tours.schedules.create');
+        Route::post('/tours/{package}/schedules', [WebAgencyTourPackageController::class, 'storeSchedule'])->name('tours.schedules.store');
 
         Route::get('/bookings', [WebAgencyBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/{booking}', [WebAgencyBookingController::class, 'show'])->name('bookings.show');
         Route::put('/bookings/{booking}/status', [WebAgencyBookingController::class, 'updateStatus'])->name('bookings.status');
 
+        Route::get('/tour-promos', [WebAgencyTourPromoController::class, 'index'])->name('tour-promos.index');
+        Route::post('/tour-promos/attach', [WebAgencyTourPromoController::class, 'attach'])->name('tour-promos.attach');
+        Route::delete('/tour-promos/{promo}/detach/{schedule}', [WebAgencyTourPromoController::class, 'detach'])->name('tour-promos.detach');
+
         Route::get('/promos', [WebAgencyPromoController::class, 'index'])->name('promos.index');
         Route::post('/promos/attach', [WebAgencyPromoController::class, 'attachToSchedule'])->name('promos.attach');
         Route::delete('/promos/{promo}/detach/{schedule}', [WebAgencyPromoController::class, 'detachFromSchedule'])->name('promos.detach');
+
+        Route::get('/rental-promos', [WebAgencyRentalPromoController::class, 'index'])->name('rental-promos.index');
+        Route::post('/rental-promos/attach', [WebAgencyRentalPromoController::class, 'attach'])->name('rental-promos.attach');
+        Route::delete('/rental-promos/{promo}/detach/{vehicle}', [WebAgencyRentalPromoController::class, 'detach'])->name('rental-promos.detach');
 
         // Transfer Penumpang
         Route::get('/schedules/{schedule}/transfer', [WebAgencyScheduleController::class, 'transferPage'])->name('schedules.transfer');
@@ -272,8 +321,10 @@ Route::middleware(['auth', \App\Http\Middleware\Web\AdminMiddleware::class])
 
         Route::get('/bookings', [WebAdminBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/{booking}', [WebAdminBookingController::class, 'show'])->name('bookings.show');
-        Route::post('/bookings/{booking}/refund-approve', [WebAdminBookingController::class, 'approveRefund'])->name('admin.refund.approve');
-        Route::post('/bookings/{booking}/refund-reject', [WebAdminBookingController::class, 'rejectRefund'])->name('admin.refund.reject');
+        Route::post('/bookings/{booking}/refund-approve', [WebAdminBookingController::class, 'approveRefund'])
+            ->name('bookings.refund.approve');
+        Route::post('/bookings/{booking}/refund-reject', [WebAdminBookingController::class, 'rejectRefund'])
+            ->name('bookings.refund.reject');
 
         Route::get('/promos', [WebAdminPromoController::class, 'index'])->name('promos.index');
         Route::get('/promos/create', [WebAdminPromoController::class, 'create'])->name('promos.create');
@@ -282,6 +333,20 @@ Route::middleware(['auth', \App\Http\Middleware\Web\AdminMiddleware::class])
         Route::get('/promos/{promo}/edit', [WebAdminPromoController::class, 'edit'])->name('promos.edit');
         Route::put('/promos/{promo}', [WebAdminPromoController::class, 'update'])->name('promos.update');
         Route::delete('/promos/{promo}', [WebAdminPromoController::class, 'destroy'])->name('promos.destroy');
+
+        Route::get('/tour-promos', [WebAdminTourPromoController::class, 'index'])->name('tour-promos.index');
+        Route::get('/tour-promos/create', [WebAdminTourPromoController::class, 'create'])->name('tour-promos.create');
+        Route::post('/tour-promos', [WebAdminTourPromoController::class, 'store'])->name('tour-promos.store');
+        Route::get('/tour-promos/{promo}/edit', [WebAdminTourPromoController::class, 'edit'])->name('tour-promos.edit');
+        Route::put('/tour-promos/{promo}', [WebAdminTourPromoController::class, 'update'])->name('tour-promos.update');
+        Route::delete('/tour-promos/{promo}', [WebAdminTourPromoController::class, 'destroy'])->name('tour-promos.destroy');
+
+        Route::get('/rental-promos', [WebAdminRentalPromoController::class, 'index'])->name('rental-promos.index');
+        Route::get('/rental-promos/create', [WebAdminRentalPromoController::class, 'create'])->name('rental-promos.create');
+        Route::post('/rental-promos', [WebAdminRentalPromoController::class, 'store'])->name('rental-promos.store');
+        Route::get('/rental-promos/{promo}/edit', [WebAdminRentalPromoController::class, 'edit'])->name('rental-promos.edit');
+        Route::put('/rental-promos/{promo}', [WebAdminRentalPromoController::class, 'update'])->name('rental-promos.update');
+        Route::delete('/rental-promos/{promo}', [WebAdminRentalPromoController::class, 'destroy'])->name('rental-promos.destroy');
 
         Route::get('/withdrawals', [WebAdminWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::post('/withdrawals/{withdrawal}/approve', [WebAdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
@@ -301,15 +366,6 @@ Route::middleware(['auth', \App\Http\Middleware\Web\AdminMiddleware::class])
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [WebPublicHomeController::class, 'index'])->name('home');
-Route::get('/search', [WebPublicSearchController::class, 'search'])->name('search');
-Route::get('/listing', [WebPublicListingController::class, 'index'])->name('listing');
-Route::get('/agency/{slug}', [WebPublicAgencyProfileController::class, 'show'])->name('agency.profile');
-Route::get('/download-app', [WebPublicHomeController::class, 'downloadApp'])->name('download-app');
-Route::get('/e-ticket', [WebPublicHomeController::class, 'eTicketPage'])->name('eticket.public');
-Route::post('/e-ticket/check', [WebPublicHomeController::class, 'checkETicket'])->name('eticket.check');
-Route::post('/e-ticket/send', [WebPublicHomeController::class, 'sendETicket'])->name('eticket.send');
-
 // Auth Routes
 Route::get('/login', [WebAuthLoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [WebAuthLoginController::class, 'login']);
@@ -318,7 +374,6 @@ Route::post('/register', [WebAuthRegisterController::class, 'register']);
 Route::post('/logout', [WebAuthLoginController::class, 'logout'])->name('logout');
 Route::get('/auth/google', [App\Http\Controllers\Web\Auth\GoogleController::class, 'redirect'])->name('google.login');
 Route::get('/auth/google/callback', [App\Http\Controllers\Web\Auth\GoogleController::class, 'callback'])->name('google.callback');
-// Forgot Password
 Route::get('/forgot-password', [App\Http\Controllers\Web\Auth\ForgotPasswordController::class, 'showForgotForm'])
     ->middleware('guest')
     ->name('password.request');
@@ -335,6 +390,19 @@ Route::post('/reset-password', [App\Http\Controllers\Web\Auth\ForgotPasswordCont
     ->middleware('guest')
     ->name('password.update');
     
+Route::get('/', [WebPublicHomeController::class, 'index'])->name('home');
+Route::get('/search', [WebPublicSearchController::class, 'search'])->name('search');
+Route::get('/listing', [WebPublicListingController::class, 'index'])->name('listing');
+Route::get('/agency/{slug}', [WebPublicAgencyProfileController::class, 'show'])->name('agency.profile');
+Route::get('/download-app', [WebPublicHomeController::class, 'downloadApp'])->name('download-app');
+Route::get('/e-ticket', [WebPublicHomeController::class, 'eTicketPage'])->name('eticket.public');
+Route::post('/e-ticket/check', [WebPublicHomeController::class, 'checkETicket'])->name('eticket.check');
+Route::post('/e-ticket/send', [WebPublicHomeController::class, 'sendETicket'])->name('eticket.send');
+Route::get('/wisata', [WebPublicTourController::class, 'index'])->name('tours.public');
+Route::get('/wisata/{slug}', [WebPublicTourController::class, 'show'])->name('tour.public.show');
+Route::get('/sewa-kendaraan', [WebPublicRentalController::class, 'index'])->name('rental.public');
+Route::get('/sewa-kendaraan', [\App\Http\Controllers\Web\Public\RentalController::class, 'index'])->name('rental.public');
+
 // routes/web.php
 Route::get('/health', function () {
     return response()->json(['status' => 'ok', 'time' => now()]);

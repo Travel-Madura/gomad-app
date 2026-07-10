@@ -194,3 +194,12 @@ body {
 .group\/slider:hover .animate-scroll {
     animation-play-state: paused;
 }
+
+/* Hide scrollbar for tab switcher */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}

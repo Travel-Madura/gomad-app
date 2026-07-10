@@ -1,6 +1,4 @@
 <?php
-// File: app/Models/Booking.php
-// Deskripsi: Booking model untuk pemesanan tiket
 
 namespace App\Models;
 
@@ -64,31 +62,26 @@ class Booking extends Model
         ];
     }
 
+    // ─── ACCESORS ───────────────────────────────────────
+
     protected function canCancel(): Attribute
     {
         return Attribute::make(
             get: function () {
-                // Jika sudah cancelled/completed/on_going → tidak bisa
                 if (in_array($this->status, ['cancelled', 'completed', 'on_going'])) {
                     return false;
                 }
                 
-                // Pending & confirmed → masih bisa cancel
                 if (in_array($this->status, ['pending', 'confirmed'])) {
                     return true;
                 }
                 
-                // Jika paid → cek waktu keberangkatan
                 if ($this->status === 'paid') {
-                    // Hitung mundur ke keberangkatan
+                    $cancelHours = (int) \App\Models\PlatformSetting::getValue('travel_cancellation_hours', 24);
                     $departureDateTime = \Carbon\Carbon::parse(
                         $this->schedule->departure_date->format('Y-m-d') . ' ' . $this->schedule->departure_time
                     );
-                    
-                    $hoursUntilDeparture = now()->diffInHours($departureDateTime, false);
-                    
-                    // Hanya bisa cancel jika > 24 jam sebelum keberangkatan
-                    return $hoursUntilDeparture > 24;
+                    return now()->diffInHours($departureDateTime, false) > $cancelHours;
                 }
                 
                 return false;
@@ -100,10 +93,9 @@ class Booking extends Model
     {
         return Attribute::make(
             get: function () {
-                if ($this->status !== 'paid') {
-                    return 0;
-                }
-                return (int) round($this->total_price * 0.25);
+                if ($this->status !== 'paid') return 0;
+                $percent = (float) \App\Models\PlatformSetting::getValue('travel_cancellation_percent', 25);
+                return (int) round($this->total_price * ($percent / 100));
             },
         );
     }
@@ -112,9 +104,7 @@ class Booking extends Model
     {
         return Attribute::make(
             get: function () {
-                if ($this->status !== 'paid') {
-                    return 0;
-                }
+                if ($this->status !== 'paid') return 0;
                 return max(0, (int) $this->total_price - $this->cancellation_fee);
             },
         );
@@ -124,15 +114,10 @@ class Booking extends Model
     {
         return Attribute::make(
             get: function () {
-                if ($this->cancellation_refund < 100000) {
-                    return false;
-                }
-                
+                $limit = (float) \App\Models\PlatformSetting::getValue('travel_refund_approval_limit', 100000);
+                if ($this->cancellation_refund < $limit) return false;
                 $hoursSinceBooking = $this->created_at->diffInHours(now());
-                if ($hoursSinceBooking < 1) {
-                    return false;
-                }
-                
+                if ($hoursSinceBooking < 1) return false;
                 return true;
             },
         );
@@ -169,6 +154,8 @@ class Booking extends Model
             get: fn () => BookingStatus::tryFrom($this->status)?->color() ?? 'gray',
         );
     }
+
+    // ─── RELATIONS ──────────────────────────────────────
 
     public function schedule(): BelongsTo
     {
@@ -215,6 +202,8 @@ class Booking extends Model
         return $this->hasOne(Review::class);
     }
 
+    // ─── SCOPES ─────────────────────────────────────────
+
     public function scopeByStatus(Builder $query, string $status): Builder
     {
         return $query->where('status', $status);
@@ -239,5 +228,3 @@ class Booking extends Model
         return $query->where('customer_id', $customerId);
     }
 }
-
-// End of file

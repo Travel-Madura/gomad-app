@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Auth\DeviceTokenController as ApiAuthDeviceTokenCon
 use App\Http\Controllers\Api\Public\HomeController as ApiPublicHomeController;
 use App\Http\Controllers\Api\Public\SearchController as ApiPublicSearchController;
 use App\Http\Controllers\Api\Public\AgencyProfileController as ApiPublicAgencyProfileController;
+use App\Http\Controllers\Api\Public\TourController as ApiPublicTourController;
 use App\Http\Controllers\Api\Public\ListingController as ApiPublicListingController;
 use App\Http\Controllers\Api\Public\ScheduleController as ApiPublicScheduleController;
 use App\Http\Controllers\Api\Public\ETicketController as ApiPublicETicketController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Api\Public\ETicketController as ApiPublicETicketControl
 // Customer Controllers
 use App\Http\Controllers\Api\Customer\BookingController as ApiCustomerBookingController;
 use App\Http\Controllers\Api\Customer\ScheduleController as ApiCustomerScheduleController;
+use App\Http\Controllers\Api\Customer\TourController as ApiCustomerTourController;
 use App\Http\Controllers\Api\Customer\RouteController as ApiCustomerRouteController;
 use App\Http\Controllers\Api\Customer\AgencyController as ApiCustomerAgencyController;
 use App\Http\Controllers\Api\Customer\PaymentController as ApiCustomerPaymentController;
@@ -31,6 +33,7 @@ use App\Http\Controllers\Api\Customer\PromoController as ApiCustomerPromoControl
 use App\Http\Controllers\Api\Agency\DashboardController as ApiAgencyDashboardController;
 use App\Http\Controllers\Api\Agency\ProfileController as ApiAgencyProfileController;
 use App\Http\Controllers\Api\Agency\ScheduleController as ApiAgencyScheduleController;
+use App\Http\Controllers\Api\Agency\TourPackageController as ApiAgencyTourPackageController;
 use App\Http\Controllers\Api\Agency\BookingController as ApiAgencyBookingController;
 use App\Http\Controllers\Api\Agency\VehicleController as ApiAgencyVehicleController;
 use App\Http\Controllers\Api\Agency\DriverController as ApiAgencyDriverController;
@@ -96,6 +99,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/schedules/{id}', [ApiPublicSearchController::class, 'scheduleDetail']);
     Route::get('/schedules/{schedule}/dropoffs/{originStopId}', [ApiPublicScheduleController::class, 'availableDropoffs']);
     Route::get('/nearby-warungs', [ApiPublicSearchController::class, 'nearbyWarungs']);
+    Route::get('/tours', [ApiPublicTourController::class, 'index']);
+    Route::get('/tours/{slug}', [ApiPublicTourController::class, 'show']);
+    Route::get('/rental/vehicles', [ApiCustomerRentalController::class, 'index']);
 
     // E-Ticket Public
     Route::post('/e-ticket/check', [ApiPublicETicketController::class, 'check']);
@@ -104,10 +110,12 @@ Route::prefix('v1')->group(function () {
     // Midtrans Callback (No Auth) — rate limit + IP whitelist
     Route::middleware(['throttle:60,1', 'midtrans.webhook'])->group(function () {
         Route::post('/midtrans/callback', [ApiCustomerPaymentController::class, 'midtransCallback']);
+        Route::post('/midtrans/tour-callback', [ApiCustomerTourController::class, 'paymentCallback']);
         Route::post('/midtrans/disbursement-callback', [ApiAdminWithdrawalController::class, 'disbursementCallback']);
         Route::post('/midtrans/settlement-callback', [ApiPaymentAgentSettlementController::class, 'settlementCallback']);
         Route::post('/midtrans/topup-callback', [ApiAgencyWalletController::class, 'topUpCallback']);
     });
+
     /*
     |--------------------------------------------------------------------------
     | Authenticated Routes
@@ -137,6 +145,20 @@ Route::prefix('v1')->group(function () {
             Route::post('/bookings', [ApiCustomerBookingController::class, 'store']);
             Route::post('/bookings/{booking}/cancel', [ApiCustomerBookingController::class, 'cancel']);
             Route::get('/bookings/{booking}/e-ticket', [ApiCustomerBookingController::class, 'eTicket']);
+
+            Route::get('/tours', [ApiCustomerTourController::class, 'index']);
+            Route::get('/tours/{package}', [ApiCustomerTourController::class, 'show']);
+            Route::get('/tours/{package}/pickup-stops', [ApiCustomerTourController::class, 'pickupStops']);
+            Route::post('/tour-bookings', [ApiCustomerTourController::class, 'store']);
+            Route::get('/tour-bookings', [ApiCustomerTourController::class, 'myBookings']);
+            Route::get('/tour-bookings/{booking}', [ApiCustomerTourController::class, 'show']);
+            Route::post('/tour-bookings/{booking}/cancel', [ApiCustomerTourController::class, 'cancel']);
+
+            Route::get('/rental/vehicles', [ApiCustomerRentalController::class, 'index']);
+            Route::get('/rental/vehicles/{vehicle}/dates', [ApiCustomerRentalController::class, 'availableDates']);
+            Route::post('/rental/calculate-distance', [ApiCustomerRentalController::class, 'calculateDistance']);
+            Route::post('/rental/bookings', [ApiCustomerRentalController::class, 'store']);
+            Route::get('/rental/bookings', [ApiCustomerRentalController::class, 'myBookings']);
 
             // Payments
             Route::post('/payments/midtrans', [ApiCustomerPaymentController::class, 'payWithMidtrans']);
@@ -195,6 +217,12 @@ Route::prefix('v1')->group(function () {
             Route::get('/schedules/{schedule}/pricing', [ApiAgencyScheduleController::class, 'pricing']);
             Route::get('/schedules/{schedule}/required-pairs', [ApiAgencyScheduleController::class, 'requiredPairs']);
             Route::post('/schedules/{schedule}/start', [ApiAgencyScheduleController::class, 'startSchedule']);
+            Route::get('/tours', [ApiAgencyTourPackageController::class, 'index']);
+            Route::post('/tours', [ApiAgencyTourPackageController::class, 'store']);
+            Route::get('/tours/{package}', [ApiAgencyTourPackageController::class, 'show']);
+            Route::put('/tours/{package}', [ApiAgencyTourPackageController::class, 'update']);
+            Route::delete('/tours/{package}', [ApiAgencyTourPackageController::class, 'destroy']);
+            Route::post('/tours/{package}/schedules', [ApiAgencyTourPackageController::class, 'storeSchedule']);
 
             // Transfers
             Route::get('/schedules/{schedule}/transfer/available', [ApiAgencyTransferController::class, 'availableSchedules']);

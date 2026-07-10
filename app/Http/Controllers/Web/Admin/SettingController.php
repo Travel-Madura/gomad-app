@@ -23,7 +23,6 @@ class SettingController extends Controller
         foreach ($request->except('_token', '_method') as $key => $value) {
             PlatformSetting::setValue($key, $value, auth()->id());
         }
-
         return back()->with('success', 'Pengaturan berhasil disimpan.');
     }
 }

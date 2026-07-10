@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Agency;
 use App\Models\AgencyWallet;
 use App\Models\Booking;
+use App\Models\TourBooking;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 
@@ -346,6 +347,61 @@ class WalletService
             'total_withdrawn' => (float) $wallet->total_withdrawn,
         ];
     }
+
+    /**
+     * Release funds untuk tour booking (setelah perjalanan selesai)
+     */
+    public function releaseFundsForTour(\App\Models\TourBooking $booking): void
+    {
+        DB::transaction(function () use ($booking) {
+            $agency = $booking->tourSchedule->tourPackage->agency;
+            $wallet = $this->getOrCreateWallet($agency);
+            $payment = $booking->payment;
+            
+            if ($payment && (float) $payment->agency_revenue > 0) {
+                $revenue = (float) $payment->agency_revenue;
+                
+                // Kurangi pending balance
+                $wallet->update([
+                    'pending_balance' => max(0, (float) $wallet->pending_balance - $revenue),
+                    'available_balance' => (float) $wallet->available_balance + $revenue,
+                ]);
+                
+                // Catat transaksi
+                \App\Models\WalletTransaction::create([
+                    'agency_id' => $agency->id,
+                    'type' => 'credit',
+                    'amount' => $revenue,
+                    'balance_before' => (float) $wallet->available_balance,
+                    'balance_after' => (float) $wallet->available_balance + $revenue,
+                    'description' => "Dana dirilis untuk tour booking {$booking->booking_code}",
+                    'reference_type' => 'tour_booking',
+                    'reference_id' => $booking->id,
+                    'created_at' => now(),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Add pending balance untuk tour booking (saat pembayaran sukses)
+     */
+    public function addPendingBalanceForTour(\App\Models\TourBooking $booking): void
+    {
+        DB::transaction(function () use ($booking) {
+            $agency = $booking->tourSchedule->tourPackage->agency;
+            $wallet = $this->getOrCreateWallet($agency);
+            $payment = $booking->payment;
+            
+            if ($payment && (float) $payment->agency_revenue > 0) {
+                $revenue = (float) $payment->agency_revenue;
+                $wallet->update([
+                    'pending_balance' => (float) $wallet->pending_balance + $revenue,
+                ]);
+            }
+        });
+    }
+
 }
 
 // End of file

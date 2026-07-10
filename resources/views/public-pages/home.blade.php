@@ -25,11 +25,10 @@
         });
 @endphp
 
-{{-- HERO SECTION: Full Center, Space Lebih Hemat --}}
+{{-- HERO SECTION --}}
 <section class="relative bg-[#C1121F] overflow-hidden py-12 md:py-20 min-h-[40vh] md:min-h-[60vh] flex items-center justify-center">
     
     <div class="container-magazine relative z-10 w-full flex justify-center">
-        {{-- Konten Teks di Tengah --}}
         <div class="text-white space-y-6 md:space-y-8 max-w-3xl text-center mt-[-4rem] md:mt-[-6rem]">
             
             <h1 class="text-4xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.9]">
@@ -42,7 +41,7 @@
                 x-data="{
                     texts: [
                         'Tak perlu datang ke terminal. Gomad siap menjemput.',
-                        'Mobilitas antar kota, tanpa batas jarak.',
+                        '{{ \App\Models\PlatformSetting::getValue('app_tagline', 'Mobilitas antar kota, tanpa batas jarak.') }}',
                         'Pesan sekarang, sampai ke rumah tanpa ribet.'
                     ],
                     currentIndex: 0,
@@ -73,49 +72,149 @@
         </div>
     </div>
     
-    {{-- Garis Pembatas Render --}}
     <div class="absolute bottom-0 left-0 right-0 h-px bg-white/20"></div>
 </section>
 
-{{-- SEARCH BAR: Mengapung dengan Dropdown Style Konsisten --}}
-<section class="-mt-16 relative z-20 container-magazine">
+{{-- ═══════════════════════════════════════════════ --}}
+{{-- SEARCH BAR — 3 TAB (RESPONSIVE) --}}
+{{-- ═══════════════════════════════════════════════ --}}
+<section class="-mt-16 relative z-20 container-magazine px-4 md:px-0">
     <div class="card-gomad shadow-xl border-0 bg-white">
-        <form action="{{ route('search') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="col-span-1">
-                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Asal</label>
-                <select name="origin" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-medium text-[#111111] appearance-none cursor-pointer transition-colors duration-300">
-                    <option value="">Semua Kota</option>
-                    @foreach($cities as $city)<option value="{{ $city->city_name }}">{{ $city->city_name }}</option>@endforeach
-                </select>
-            </div>
-            <div class="col-span-1">
-                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Tujuan</label>
-                <select name="destination" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-medium text-[#111111] appearance-none cursor-pointer transition-colors duration-300">
-                    <option value="">Semua Kota</option>
-                    @foreach($cities as $city)<option value="{{ $city->city_name }}">{{ $city->city_name }}</option>@endforeach
-                </select>
-            </div>
-            <div class="col-span-1">
-                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Tanggal</label>
-                <input type="date" name="date" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-medium text-[#111111] transition-colors duration-300">
-            </div>
-            <div class="col-span-1">
-                <label class="block text-xs font-mono uppercase tracking-wider text-gray-500 mb-1">Kelas</label>
-                <select name="travel_class" class="w-full px-0 py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent font-medium text-[#111111] appearance-none cursor-pointer transition-colors duration-300">
-                    <option value="">Semua</option>
-                    <option value="economy">Ekonomi</option>
-                    <option value="premium">Premium</option>
-                    <option value="charter">Charter</option>
-                </select>
-            </div>
-            <div class="col-span-1 flex items-end">
-                <button type="submit" class="w-full btn-gomad-primary text-center py-2.5 text-sm rounded-[12px]">Cari Jadwal</button>
-            </div>
-        </form>
+        
+        {{-- TAB SWITCHER — Compact di mobile --}}
+        <div class="flex border-b border-[#E5E5E5] overflow-x-auto scrollbar-hide" id="searchTabs">
+            <button onclick="switchSearchTab('travel')" 
+                    class="tab-btn flex-shrink-0 px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-semibold border-b-2 border-[#C1121F] text-[#C1121F] transition-colors whitespace-nowrap">
+                🎫 Travel
+            </button>
+            <button onclick="switchSearchTab('tour')" 
+                    class="tab-btn flex-shrink-0 px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-[#111111] transition-colors whitespace-nowrap">
+                🏝️ Wisata
+            </button>
+            <button onclick="switchSearchTab('rental')" 
+                    class="tab-btn flex-shrink-0 px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-[#111111] transition-colors whitespace-nowrap">
+                🚐 Sewa
+            </button>
+        </div>
+
+        <div class="p-3 md:p-6">
+            
+            {{-- ═══════════════════════════════════════════════ --}}
+            {{-- FORM TRAVEL --}}
+            {{-- ═══════════════════════════════════════════════ --}}
+            <form id="form-travel" action="{{ route('search') }}" method="GET" class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Asal</label>
+                    <select name="origin" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111] appearance-none cursor-pointer">
+                        <option value="">Semua Kota</option>
+                        @foreach($cities as $city)<option value="{{ $city->city_name }}">{{ $city->city_name }}</option>@endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Tujuan</label>
+                    <select name="destination" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111] appearance-none cursor-pointer">
+                        <option value="">Semua Kota</option>
+                        @foreach($cities as $city)<option value="{{ $city->city_name }}">{{ $city->city_name }}</option>@endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Tanggal</label>
+                    <input type="date" name="date" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kelas</label>
+                    <select name="travel_class" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111] appearance-none cursor-pointer">
+                        <option value="">Semua</option>
+                        <option value="economy">Ekonomi</option>
+                        <option value="premium">Premium</option>
+                        <option value="charter">Charter</option>
+                    </select>
+                </div>
+                <div class="col-span-2 lg:col-span-1 flex items-end">
+                    <button type="submit" class="w-full btn-gomad-primary text-center py-2 md:py-2.5 text-sm rounded-[12px]">Cari Jadwal</button>
+                </div>
+            </form>
+
+            {{-- ═══════════════════════════════════════════════ --}}
+            {{-- FORM TOUR (Hidden) --}}
+            {{-- ═══════════════════════════════════════════════ --}}
+            <form id="form-tour" action="{{ route('tours.public') }}" method="GET" class="grid grid-cols-2 lg:grid-cols-4 gap-3" style="display:none;">
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kata Kunci</label>
+                    <input type="text" name="search" placeholder="Nama paket..." class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Durasi</label>
+                    <select name="duration" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        <option value="">Semua</option>
+                        <option value="1">1 Hari</option>
+                        <option value="2">2 Hari</option>
+                        <option value="3">3+ Hari</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Budget</label>
+                    <select name="max_budget" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        <option value="">Semua</option>
+                        <option value="500000">Rp 500rb</option>
+                        <option value="1000000">Rp 1jt</option>
+                        <option value="2000000">Rp 2jt</option>
+                    </select>
+                </div>
+                <div class="col-span-2 lg:col-span-1 flex items-end">
+                    <button type="submit" class="w-full bg-purple-600 text-white text-center py-2 md:py-2.5 text-sm rounded-[12px] hover:bg-purple-700 transition font-semibold">Cari Wisata</button>
+                </div>
+            </form>
+
+            {{-- ═══════════════════════════════════════════════ --}}
+            {{-- FORM RENTAL (Hidden) --}}
+            {{-- ═══════════════════════════════════════════════ --}}
+            <form id="form-rental" action="{{ route('rental.public') }}" method="GET" class="grid grid-cols-2 lg:grid-cols-5 gap-3" style="display:none;">
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Kapasitas</label>
+                    <select name="passengers" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        <option value="">Semua</option>
+                        <option value="4">4+ Orang</option>
+                        <option value="8">8+ Orang</option>
+                        <option value="12">12+ Orang</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Bulan</label>
+                    <select name="month" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        @for($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ now()->month == $m ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($m)->locale('id')->monthName }}
+                        </option>
+                        @endfor
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Supir</label>
+                    <select name="include_driver" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        <option value="">Semua</option>
+                        <option value="1">Include Supir</option>
+                        <option value="0">Tanpa Supir</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1">Agency</label>
+                    <select name="agency_id" class="w-full px-0 py-1.5 md:py-2 border-b-2 border-[#E5E5E5] focus:border-[#C1121F] outline-none bg-transparent text-sm font-medium text-[#111111]">
+                        <option value="">Semua</option>
+                        @foreach(\App\Models\Agency::where('is_verified', true)->orderBy('agency_name')->get() as $agency)
+                        <option value="{{ $agency->id }}">{{ $agency->agency_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-span-2 lg:col-span-1 flex items-end">
+                    <button type="submit" class="w-full bg-green-600 text-white text-center py-2 md:py-2.5 text-sm rounded-[12px] hover:bg-green-700 transition font-semibold">Cari Kendaraan</button>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
 
-{{-- RUTE POPULER (Auto Slide CSS - Landscape Card) --}}
+{{-- RUTE POPULER --}}
 <section class="section container-magazine border-b border-[#E5E5E5]">
     <div class="flex items-center gap-4 mb-12">
         <div class="h-px w-12 bg-[#C1121F]"></div>
@@ -124,13 +223,10 @@
 
     @if(isset($popularRoutes) && $popularRoutes->isNotEmpty())
     <div class="relative w-full overflow-hidden group/slider">
-        {{-- Track Penggeser --}}
         <div class="flex gap-4 md:gap-6 animate-scroll hover:pause">
             
-            {{-- Loop Data Asli --}}
             @foreach($popularRoutes as $route)
             <div class="card-gomad overflow-hidden flex-shrink-0 flex flex-row w-[calc(100%-1rem)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] cursor-pointer p-0 h-32 md:h-40 group/card">
-                {{-- Gambar di Kiri (Landscape) --}}
                 <div class="w-1/3 h-full overflow-hidden bg-[#F5F5F5] flex-shrink-0">
                     @if($route->photo)
                     <img src="{{ $route->photo }}" alt="{{ $route->route_name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105">
@@ -139,7 +235,6 @@
                     @endif
                 </div>
                 
-                {{-- Teks di Kanan --}}
                 <div class="w-2/3 p-4 flex flex-col justify-between">
                     <div>
                         <h3 class="font-bold text-[#111111] text-base md:text-lg truncate">{{ $route->route_name }}</h3>
@@ -153,7 +248,6 @@
             </div>
             @endforeach
 
-            {{-- Loop Duplikasi Data (Agar geseran tidak putus/infinite) --}}
             @foreach($popularRoutes as $route)
             <div class="card-gomad overflow-hidden flex-shrink-0 flex flex-row w-[calc(100%-1rem)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] cursor-pointer p-0 h-32 md:h-40 group/card">
                 <div class="w-1/3 h-full overflow-hidden bg-[#F5F5F5] flex-shrink-0">
@@ -179,13 +273,11 @@
         </div>
     </div>
     @else
-    <div class="text-center py-12 text-gray-400 font-mono uppercase tracking-widest">
-        Belum ada rute populer saat ini.
-    </div>
+    <div class="text-center py-12 text-gray-400 font-mono uppercase tracking-widest">Belum ada rute populer saat ini.</div>
     @endif
 </section>
 
-{{-- LAYANAN (SERVICE) --}}
+{{-- LAYANAN --}}
 <section id="services" class="section container-magazine">
     <div class="flex items-center gap-4 mb-12">
         <div class="h-px w-12 bg-[#C1121F]"></div>
@@ -215,32 +307,31 @@
             </div>
         </div>
         
-        {{-- Charter --}}
+        {{-- Tour --}}
         <div class="card-gomad flex flex-col gap-4 group">
-            <div class="text-4xl text-[#C1121F]">🚙</div>
-            <h3 class="text-xl font-bold text-[#111111]">Charter</h3>
-            <p class="text-sm text-gray-500 leading-relaxed">Sewa mobil + supir. Harga flat per mobil, fleksibel sesuai kebutuhan.</p>
+            <div class="text-4xl text-[#C1121F]">🏝️</div>
+            <h3 class="text-xl font-bold text-[#111111]">Paket Wisata</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Tour multi-hari dengan itinerary lengkap. Semua sudah termasuk.</p>
             <div class="mt-auto pt-4 border-t border-[#E5E5E5] group-hover:border-[#C1121F] transition-colors flex justify-between items-center">
-                <span class="text-xs font-mono uppercase">Hubungi Kami</span>
+                <span class="text-xs font-mono uppercase">Lihat Paket</span>
                 <span class="text-[#C1121F] group-hover:translate-x-2 transition-transform">→</span>
             </div>
         </div>
         
-        {{-- Warung GoMad --}}
+        {{-- Rental --}}
         <div class="card-gomad flex flex-col gap-4 group">
-            <div class="text-4xl text-[#C1121F]">🏪</div>
-            <h3 class="text-xl font-bold text-[#111111]">Warung GoMad</h3>
-            <p class="text-sm text-gray-500 leading-relaxed">Bayar cash di warung terdekat. Tanpa rekening, tanpa ribet.</p>
+            <div class="text-4xl text-[#C1121F]">🚐</div>
+            <h3 class="text-xl font-bold text-[#111111]">Sewa Kendaraan</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Sewa kendaraan + supir untuk keperluan Anda. Harga per KM, fleksibel.</p>
             <div class="mt-auto pt-4 border-t border-[#E5E5E5] group-hover:border-[#C1121F] transition-colors flex justify-between items-center">
-                <span class="text-xs font-mono uppercase">Terima Kasih</span>
+                <span class="text-xs font-mono uppercase">Cari Kendaraan</span>
                 <span class="text-[#C1121F] group-hover:translate-x-2 transition-transform">→</span>
             </div>
         </div>
-
     </div>
 </section>
 
-{{-- PEMBAYARAN & SEBARAN WARUNG (Peta Full Color) --}}
+{{-- PEMBAYARAN & PETA --}}
 <section class="section bg-[#F5F5F5]">
     <div class="container-magazine grid md:grid-cols-2 gap-12">
         <div>
@@ -266,7 +357,23 @@
 
 @push('scripts')
 <script>
-// Home Warung Map - Full Color, Marker Merah
+// ─── SEARCH TAB SWITCHER ─────────────────────────────
+function switchSearchTab(type) {
+    // Update tab buttons
+    document.querySelectorAll('#searchTabs .tab-btn').forEach(btn => {
+        btn.classList.remove('border-[#C1121F]', 'text-[#C1121F]');
+        btn.classList.add('border-transparent', 'text-gray-500');
+    });
+    event.target.classList.add('border-[#C1121F]', 'text-[#C1121F]');
+    event.target.classList.remove('border-transparent', 'text-gray-500');
+    
+    // Show/hide forms
+    document.getElementById('form-travel').style.display = type === 'travel' ? 'grid' : 'none';
+    document.getElementById('form-tour').style.display = type === 'tour' ? 'grid' : 'none';
+    document.getElementById('form-rental').style.display = type === 'rental' ? 'grid' : 'none';
+}
+
+// ─── WARUNG MAP ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
     var mapEl = document.getElementById('homeWarungMap');
     if (!mapEl) return;
@@ -282,7 +389,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (warungs.length === 0) return;
 
     var bounds = L.latLngBounds();
-    var count = 0;
     
     warungs.forEach(function(w) {
         var lat = parseFloat(w.latitude);
@@ -308,12 +414,9 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         
         bounds.extend([lat, lng]);
-        count++;
     });
     
-    if (count > 0) {
-        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
-    }
+    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
 });
 </script>
 @endpush

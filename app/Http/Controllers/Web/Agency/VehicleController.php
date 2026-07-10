@@ -39,10 +39,25 @@ class VehicleController extends Controller
             'year' => ['nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
             'capacity' => ['required', 'integer', 'min:4', 'max:20'],
             'type' => ['required', 'in:economy,premium'],
+            'status' => ['required', 'in:active,maintenance,inactive'],           // 👈 TAMBAHKAN
+            'is_rental_available' => ['nullable', 'boolean'],                      // 👈 TAMBAHKAN
+            'rental_price_per_km' => ['nullable', 'numeric', 'min:0'],             // 👈 TAMBAHKAN
+            'rental_min_price' => ['nullable', 'numeric', 'min:0'],                // 👈 TAMBAHKAN
+            'rental_extra_day_price' => ['nullable', 'numeric', 'min:0'],          // 👈 TAMBAHKAN
+            'rental_include_driver' => ['nullable', 'boolean'],                    // 👈 TAMBAHKAN
+            'rental_driver_price_per_day' => ['nullable', 'numeric', 'min:0'],     // 👈 TAMBAHKAN
+            'rental_max_passengers' => ['nullable', 'integer', 'min:1'],           // 👈 TAMBAHKAN
             'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
-        $data = $request->only(['plate_number', 'brand', 'model', 'year', 'capacity', 'type']);
+        $data = $request->only([
+            'plate_number', 'brand', 'model', 'year', 'capacity', 'type',
+            'status', 'is_rental_available', 'rental_price_per_km',       // 👈 TAMBAHKAN
+            'rental_min_price', 'rental_extra_day_price',                   // 👈 TAMBAHKAN
+            'rental_include_driver', 'rental_driver_price_per_day',         // 👈 TAMBAHKAN
+            'rental_max_passengers',                                        // 👈 TAMBAHKAN
+        ]);
+
         $data['agency_id'] = auth()->user()->agency->id;
         $data['is_active'] = true;
 
@@ -51,6 +66,10 @@ class VehicleController extends Controller
             $result = $this->cloudinaryService->upload($request->file('vehicle_image'), 'vehicles');
             $data['vehicle_image'] = $result['url'];
         }
+
+        // Set boolean checkbox
+        $data['is_rental_available'] = $request->has('is_rental_available');
+        $data['rental_include_driver'] = $request->has('rental_include_driver');
 
         Vehicle::create($data);
         auth()->user()->agency->increment('fleet_size');
@@ -76,19 +95,41 @@ class VehicleController extends Controller
             'year' => ['nullable', 'integer', 'min:2000', 'max:' . (date('Y') + 1)],
             'capacity' => ['required', 'integer', 'min:4', 'max:20'],
             'type' => ['required', 'in:economy,premium'],
+            'status' => ['required', 'in:active,maintenance,inactive'],
+            'is_rental_available' => ['nullable'],
+            'rental_price_per_km' => ['nullable', 'numeric', 'min:0'],
+            'rental_min_price' => ['nullable', 'numeric', 'min:0'],
+            'rental_extra_day_price' => ['nullable', 'numeric', 'min:0'],
+            'rental_include_driver' => ['nullable'],
+            'rental_driver_price_per_day' => ['nullable', 'numeric', 'min:0'],
+            'rental_max_passengers' => ['nullable', 'integer', 'min:1'],
             'vehicle_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
-        $data = $request->only(['plate_number', 'brand', 'model', 'year', 'capacity', 'type']);
+        // 👇 AMBIL FIELD DASAR + RENTAL
+        $data = $request->only([
+            'plate_number', 'brand', 'model', 'year', 'capacity', 'type',
+            'status',
+            'is_rental_available', 'rental_price_per_km', 'rental_min_price',
+            'rental_extra_day_price', 'rental_include_driver',
+            'rental_driver_price_per_day', 'rental_max_passengers',
+        ]);
+
+        // 👇 HANDLE CHECKBOX MANUAL
+        $data['is_rental_available'] = $request->has('is_rental_available') && $request->is_rental_available == '1';
+        $data['rental_include_driver'] = $request->has('rental_include_driver') && $request->rental_include_driver == '1';
+
+        // 👇 JIKA STATUS BUKAN ACTIVE, MATIKAN RENTAL
+        if ($data['status'] !== 'active') {
+            $data['is_rental_available'] = false;
+        }
 
         // Upload foto baru via Cloudinary
         if ($request->hasFile('vehicle_image')) {
-            // Hapus foto lama dari Cloudinary
             if ($vehicle->vehicle_image && str_starts_with($vehicle->vehicle_image, 'http')) {
                 $publicId = $this->extractCloudinaryPublicId($vehicle->vehicle_image);
                 if ($publicId) $this->cloudinaryService->delete($publicId);
             }
-            
             $result = $this->cloudinaryService->upload($request->file('vehicle_image'), 'vehicles');
             $data['vehicle_image'] = $result['url'];
         }

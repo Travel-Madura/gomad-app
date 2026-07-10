@@ -12,8 +12,8 @@
     <meta name="robots" content="index, follow">
 
     {{-- Open Graph --}}
-    <meta property="og:title" content="@yield('og_title', 'GoMad - Solusi transportasi Anda')">
-    <meta property="og:description" content="@yield('og_description', 'GoMad - Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.')">
+    <meta property="og:title" content="@yield('og_title', \App\Models\PlatformSetting::getValue('app_name', 'GoMad'))">
+    <meta property="og:description" content="@yield('og_description', \App\Models\PlatformSetting::getValue('app_tagline', 'Mobilitas orèng Madhurâ'))">
     <meta property="og:image" content="@yield('og_image', asset('images/og-default.jpg'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
@@ -31,7 +31,8 @@
     {{-- Favicon --}}
     <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
 
-    <title>@yield('title', 'GoMad') - Solusi transportasi Anda</title>
+    <title>@yield('title', \App\Models\PlatformSetting::getValue('app_name', 'GoMad')) - 
+        {{ \App\Models\PlatformSetting::getValue('app_tagline', 'Mobilitas orèng Madhurâ') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
@@ -54,6 +55,8 @@
                     ['route' => 'home', 'label' => 'Beranda'],
                     ['route' => 'search', 'label' => 'Cari Jadwal'],
                     ['route' => 'listing', 'label' => 'Agency'],
+                    ['route' => 'rental.public', 'label' => 'Sewa Kendaraan'],  
+                    ['route' => 'tours.public', 'label' => 'Wisata'],
                     ['route' => 'download-app', 'label' => 'App'],
                     ['route' => 'eticket.public', 'label' => 'E-Ticket']
                 ] as $link)
@@ -120,7 +123,8 @@
                 <a href="{{ route('home') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Beranda</a>
                 <a href="{{ route('search') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Cari Jadwal</a>
                 <a href="{{ route('listing') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Agency</a>
-                <a href="{{ route('download-app') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Download App</a>
+                <a href="{{ route('tours.public') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Paket Wisata</a>                <a href="{{ route('download-app') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Download App</a>
+                <a href="{{ route('rental.public') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Sewa Kendaraan</a>  {{-- 👈 TAMBAHKAN --}}
                 <a href="{{ route('eticket.public') }}" class="border-b border-[#E5E5E5] pb-3 hover:text-[#C1121F] transition">Cek E-Ticket</a>
             </div>
 
@@ -155,6 +159,10 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3"/></svg>
                 <span>Agency</span>
             </a>
+            <a href="{{ route('rental.public') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('rental.public') ? 'text-[#C1121F]' : 'text-gray-500' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                <span>Sewa Kendaraan</span>
+            </a>
             @auth
             <a href="{{ route('customer.profile') }}" class="flex flex-col items-center gap-1 text-[10px] {{ request()->routeIs('customer.profile') ? 'text-[#C1121F]' : 'text-gray-500' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14"/></svg>
@@ -172,29 +180,43 @@
                     <span class="text-4xl font-bold tracking-tighter">Go</span>
                     <span class="text-[#C1121F] text-4xl font-bold tracking-tighter">Mad</span>
                 </div>
-                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">Solusi transportasi Anda. Booking travel antar kota dengan mudah, dijemput di rumah, dan diantar ke tujuan.</p>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+                    {{ \App\Models\PlatformSetting::getValue('app_tagline', 'Solusi transportasi Anda.') }}
+                </p>
             </div>
             
             <div class="md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
                 <div>
                     <h4 class="font-semibold text-white mb-4">Layanan</h4>
-                    <ul class="space-y-2 text-gray-400"><li>Ekonomi</li><li>Premium</li><li>Charter</li></ul>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ route('search') }}" class="hover:text-white transition">Travel Reguler</a></li>
+                        <li><a href="{{ route('rental.public') }}" class="hover:text-white transition">Sewa Kendaraan</a></li> 
+                        <li><a href="{{ route('tours.public') }}" class="hover:text-white transition">Paket Wisata</a></li>
+                        <li>Charter</li>
+                    </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-white mb-4">Tautan</h4>
-                    <ul class="space-y-2 text-gray-400"><li>Beranda</li><li>Cari</li><li>E-Ticket</li></ul>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition">Beranda</a></li>
+                        <li><a href="{{ route('search') }}" class="hover:text-white transition">Cari Jadwal</a></li>
+                        <li><a href="{{ route('eticket.public') }}" class="hover:text-white transition">Cek E-Ticket</a></li>
+                        <li><a href="{{ route('download-app') }}" class="hover:text-white transition">Download App</a></li>
+                    </ul>
                 </div>
                 <div>
                     <h4 class="font-semibold text-white mb-4">Kontak</h4>
-                    <ul class="space-y-2 text-gray-400"><li>support@gomad.id</li><li>Sumenep, Madura</li></ul>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>📧 {{ \App\Models\PlatformSetting::getValue('support_email', 'support@gomad.id') }}</li>
+                        <li>📞 {{ \App\Models\PlatformSetting::getValue('support_phone', '081234567890') }}</li>
+                        <li>Sumenep, Madura</li>
+                    </ul>
                 </div>
             </div>
         </div>
-        
-        <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzR2LTRIMjR2NEgxMnYxMmwxMiAxMlY0MGgxMnYxMmgxMlYzNHoiLz48L2c+PC9nPjwvc3ZnPg==')]"></div>
 
         <div class="container-magazine mt-12 pt-8 border-t border-white/10 text-center text-gray-500 text-xs relative z-10">
-            &copy; {{ date('Y') }} GoMad. All rights reserved.
+            &copy; {{ date('Y') }} {{ \App\Models\PlatformSetting::getValue('app_name', 'GoMad') }}. All rights reserved.
         </div>
     </footer>
 
